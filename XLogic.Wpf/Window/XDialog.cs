@@ -1,0 +1,41 @@
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+
+namespace XLogic.Wpf.Window
+{
+    public class XDialog : XWindow
+    {
+        protected override void AddWindowControl()
+        {
+            // 关闭按钮
+            if (GetTemplateChild("CloseButton") is Button close)
+                close.Click += (_, _) => OnCloseClick();
+            // 查找背景网格
+            if (FindName("BackGrid") is Grid grid)
+            {
+                // 设置背景色，确保能被鼠标命中
+                grid.Background ??= Brushes.Transparent;
+                grid.MouseLeftButtonDown += BackGrid_MouseDown;
+            }
+        }
+
+        /// <summary>
+        /// 关闭.单击
+        /// </summary>
+        protected virtual void OnCloseClick() => Close();
+
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
+            Width += 2;
+            MinWidth += 2;
+            Left -= 1;
+        }
+
+        private void BackGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed) DragMove();
+        }
+    }
+}

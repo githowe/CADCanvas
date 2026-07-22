@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SubSystem\EditerSystem\Image\Circle.png" />
+    <None Remove="SubSystem\EditerSystem\Image\Line.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="SubSystem\OptionSystem\Define\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\XLogic.AppFrame\XLogic.AppFrame.csproj" />
+    <ProjectReference Include="..\XLogic.Base\XLogic.Base.csproj" />
+    <ProjectReference Include="..\XLogic.Windows\XLogic.Windows.csproj" />
+    <ProjectReference Include="..\XLogic.WpfControl\XLogic.WpfControl.csproj" />
+    <ProjectReference Include="..\XLogic.WpfStyleEx\XLogic.WpfStyleEx.csproj" />
+    <ProjectReference Include="..\XLogic.WpfStyle\XLogic.WpfStyle.csproj" />
+    <ProjectReference Include="..\XLogic.Wpf\XLogic.Wpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="SubSystem\EditerSystem\Image\Circle.png" />
+    <Resource Include="SubSystem\EditerSystem\Image\Line.png" />
+  </ItemGroup>
+
+</Project>
