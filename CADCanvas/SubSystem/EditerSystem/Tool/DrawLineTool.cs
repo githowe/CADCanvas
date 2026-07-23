@@ -1,4 +1,5 @@
 ﻿using CADCanvas.SubSystem.EditerSystem.Component;
+using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows.Input;
 using XLogic.Wpf.Behavior;
 
@@ -21,6 +22,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         public override void Init()
         {
+            Cursor = CursorManager.Instance.Draw;
+
             // 移动
             NewTree(Behaviors.Move, (_) =>
             {
@@ -92,11 +95,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             NewTree(Behaviors.MiddleDown, (_) =>
             {
                 _host.BeginDragCanvas();
+                _host.CaptureOperationLayer();
             });
             NewNode(Behaviors.MiddleUp, (_) =>
             {
                 ResetTree();
                 _host.EndDragCanvas();
+                _host.ReleaseOperationLayer();
             });
             BackToRoot();
             // 中键按下 -> 移动 -> 松开
@@ -108,6 +113,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             {
                 ResetTree();
                 _host.EndDragCanvas();
+                _host.ReleaseOperationLayer();
             });
             Finish();
         }

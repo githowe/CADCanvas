@@ -16,14 +16,22 @@ namespace CADCanvas.SubSystem.ResourceSystem
 
         #region 光标
 
+        /// <summary>选择</summary>
+        public Cursor? Select { get; set; }
+
         /// <summary>绘制</summary>
         public Cursor? Draw { get; set; }
+
+        /// <summary>移动</summary>
+        public Cursor? Move { get; set; }
 
         #endregion
 
         public void Init()
         {
+            Select = LoadCursor("Assets/Cursor/Select.cur");
             Draw = LoadCursor("Assets/Cursor/Draw.cur");
+            Move = LoadCursor("Assets/Cursor/Move.cur");
         }
 
         public void Reset() { }

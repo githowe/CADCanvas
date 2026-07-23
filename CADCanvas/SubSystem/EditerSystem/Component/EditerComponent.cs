@@ -19,7 +19,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         protected override void Init()
         {
-            _host.Layer_Mouse.Cursor = CursorManager.Instance.Draw;
             GetComponent<ToolBarComponent>().ToolClick += ToolBar_ToolClick;
         }
 

@@ -1,6 +1,8 @@
 ﻿using CADCanvas.SubSystem.DrawingSystem;
 using CADCanvas.SubSystem.EditerSystem.Tool;
+using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
+using System.Windows.Input;
 using XLogic.Base.UI;
 
 namespace CADCanvas.SubSystem.EditerSystem.Component
@@ -23,8 +25,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public void SwitchTool(CanvasToolBase tool)
         {
-            _currentTool.Clear();
+            _currentTool?.Clear();
             _currentTool = tool;
+            _host.Layer_Mouse.Cursor = tool.Cursor;
         }
 
         #endregion
@@ -40,17 +43,58 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>
         /// 开始拖动画布
         /// </summary>
-        public void BeginDragCanvas() { }
+        public void BeginDragCanvas()
+        {
+            _host.Layer_Mouse.Cursor = CursorManager.Instance.Move;
+            _mouseDown = Mouse.GetPosition(_host.Layer_Mouse);
+        }
 
         /// <summary>
         /// 拖动画布
         /// </summary>
-        public void DragCanvas() { }
+        public void DragCanvas()
+        {
+            // 当前鼠标坐标
+            Point currentPoint = Mouse.GetPosition(_host.Layer_Mouse);
+            // 计算偏移
+            Point offset = new Point(currentPoint.X - _mouseDown.X, currentPoint.Y - _mouseDown.Y);
+            // 获取图层组件
+            LayerComponent layer = GetComponent<LayerComponent>();
+            // 平移网格
+            layer.MoveGrid(offset);
+            // 更新图形
+            layer.UpdateLayerPosition();
+        }
 
         /// <summary>
         /// 结束拖动画布
         /// </summary>
-        public void EndDragCanvas() { }
+        public void EndDragCanvas()
+        {
+            _host.Layer_Mouse.Cursor = CurrentTool.Cursor;
+            _layerComponent.ApplyMoveGrid();
+        }
+
+        /// <summary>
+        /// 缩放画布
+        /// </summary>
+        public void ResizeCanvas(MouseWheelEventArgs e)
+        {
+            _layerComponent.ResizeGrid(e);
+            _layerComponent.UpdateLayerPosition();
+        }
+
+        #endregion
+
+        #region 选择工具方法
+
+        /// <summary>
+        /// 更新悬停对象
+        /// </summary>
+        public void UpdateHoverObject()
+        {
+
+        }
 
         #endregion
 
@@ -115,11 +159,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         protected override void Init()
         {
+            // 初始化工具
             _selectTool = new SelectTool(this);
             _drawLineTool = new DrawLineTool(this);
-            _currentTool = _selectTool;
-
             _drawLineTool.Finished = OnToolFinished;
+            // 初始化当前工具为选择工具
+            SwitchTool(_selectTool);
 
             _layerComponent = GetComponent<LayerComponent>();
         }

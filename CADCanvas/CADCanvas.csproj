@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Cursor\Move.cur" />
     <None Remove="SubSystem\EditerSystem\Image\Circle.png" />
     <None Remove="SubSystem\EditerSystem\Image\Line.png" />
   </ItemGroup>
@@ -33,6 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Cursor\Move.cur" />
+    <Resource Include="Assets\Cursor\Select.cur" />
     <Resource Include="Assets\Cursor\Draw.cur" />
     <Resource Include="SubSystem\EditerSystem\Image\Circle.png" />
     <Resource Include="SubSystem\EditerSystem\Image\Line.png" />

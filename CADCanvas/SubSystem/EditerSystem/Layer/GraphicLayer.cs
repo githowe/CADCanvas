@@ -17,6 +17,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
 
         public List<GeoVisual> GeoVisualList { get; set; } = new List<GeoVisual>();
 
+        public override void Init()
+        {
+            IsHitTestVisible = false;
+        }
+
         protected override void OnUpdate()
         {
             foreach (var visual in GeoVisualList)

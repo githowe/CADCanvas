@@ -47,6 +47,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             _microLine.Freeze();
             _centerLine.Freeze();
             _centerList.Freeze();
+            IsHitTestVisible = false;
         }
 
         /// <summary>

@@ -14,6 +14,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     {
         #region 公开方法
 
+        public Point GetScreenPoint() => Mouse.GetPosition(_host.Layer_Mouse);
+
+        /// <summary>
+        /// 获取当前鼠标的世界坐标
+        /// </summary>
+        public Point GetWorldPoint() => _gridLayer.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
+
         public void UpdateGrid()
         {
             _gridLayer.Width = _host.LayerBox.ActualWidth;
@@ -29,6 +36,32 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
                 item.Height = _host.LayerBox.ActualHeight;
                 item.Update();
             }
+        }
+
+        /// <summary>
+        /// 更新图层位置
+        /// </summary>
+        public void UpdateLayerPosition()
+        {
+            foreach (var item in _layerList) item.Update();
+        }
+
+        /// <summary>
+        /// 平移网格
+        /// </summary>
+        public void MoveGrid(Point offset) => _gridLayer.MoveLayer(offset);
+
+        /// <summary>
+        /// 应用平移
+        /// </summary>
+        public void ApplyMoveGrid() => _gridLayer.ApplyOffset();
+
+        /// <summary>
+        /// 缩放网格
+        /// </summary>
+        public void ResizeGrid(MouseWheelEventArgs e)
+        {
+            _gridLayer.ResizeLayer(Mouse.GetPosition(_host.Layer_Mouse), e.Delta / 120);
         }
 
         #region 图形图层
@@ -88,13 +121,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         }
 
         #endregion
-
-        public Point GetScreenPoint() => Mouse.GetPosition(_host.Layer_Mouse);
-
-        /// <summary>
-        /// 获取当前鼠标的世界坐标
-        /// </summary>
-        public Point GetWorldPoint() => _gridLayer.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
 
         #endregion
 
