@@ -1,4 +1,5 @@
-﻿using CADCanvas.SubSystem.EditerSystem.Tool;
+﻿using CADCanvas.SubSystem.DrawingSystem;
+using CADCanvas.SubSystem.EditerSystem.Tool;
 using System.Windows;
 using XLogic.Base.UI;
 
@@ -24,7 +25,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         {
             _currentTool.Clear();
             _currentTool = tool;
-            _host.Layer_Mouse.Cursor = tool.Cursor;
         }
 
         #endregion
@@ -61,7 +61,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void LineTool_SelectStart()
         {
-
+            // 吸附点
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void LineTool_SetStart()
         {
-
+            _layerComponent.SetLineToolStart();
         }
 
         /// <summary>
@@ -77,7 +77,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void LineTool_SelectNext()
         {
-
+            _layerComponent.SetLineToolEnd();
+            _layerComponent.UpdateLineTool();
         }
 
         /// <summary>
@@ -85,7 +86,27 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void LineTool_SetNext()
         {
+            // 获取起点与终点
+            Point start = _layerComponent.GetLineToolStart();
+            Point end = _layerComponent.GetWorldPoint();
+            // 创建直线
+            VisualLine line = GeoCreator.Instance.CreateLine(start.X, start.Y, end.X, end.Y);
+            // 添加直线
+            _layerComponent.AddGraphic(line);
+            // 更新图形
+            _layerComponent.UpdateGraphic();
 
+            // 清除直线工具并设置起点
+            _layerComponent.ClearLineTool();
+            _layerComponent.SetLineToolStart();
+        }
+
+        /// <summary>
+        /// 取消绘制直线
+        /// </summary>
+        public void LineTool_Cancel()
+        {
+            _layerComponent.ClearLineTool();
         }
 
         #endregion
@@ -97,6 +118,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _selectTool = new SelectTool(this);
             _drawLineTool = new DrawLineTool(this);
             _currentTool = _selectTool;
+
+            _drawLineTool.Finished = OnToolFinished;
+
+            _layerComponent = GetComponent<LayerComponent>();
+        }
+
+        #endregion
+
+        #region 私有方法
+
+        private void OnToolFinished()
+        {
+            SwitchTool(_selectTool);
         }
 
         #endregion
@@ -112,6 +146,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         private Point _mouseDown = new Point();
         /// <summary>鼠标按下时的世界坐标</summary>
         private Point _worldPointDown = new Point();
+
+        private LayerComponent? _layerComponent;
 
         #endregion
     }

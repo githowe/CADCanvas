@@ -1,4 +1,5 @@
-﻿using XLogic.Base.UI;
+﻿using CADCanvas.SubSystem.ResourceSystem;
+using XLogic.Base.UI;
 
 namespace CADCanvas.SubSystem.EditerSystem.Component
 {
@@ -18,6 +19,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         protected override void Init()
         {
+            _host.Layer_Mouse.Cursor = CursorManager.Instance.Draw;
             GetComponent<ToolBarComponent>().ToolClick += ToolBar_ToolClick;
         }
 

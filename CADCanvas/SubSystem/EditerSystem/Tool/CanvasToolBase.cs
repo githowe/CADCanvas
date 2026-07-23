@@ -10,5 +10,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         /// <summary>光标</summary>
         public Cursor Cursor { get; set; } = Cursors.Arrow;
+
+        public Action? Finished { get; set; } = null;
     }
 }

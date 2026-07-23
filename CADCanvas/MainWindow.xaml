@@ -7,6 +7,7 @@
         xmlns:xw="clr-namespace:XLogic.Wpf.Window;assembly=XLogic.Wpf"
         xmlns:xwc="clr-namespace:XLogic.WpfControl;assembly=XLogic.WpfControl"
         mc:Ignorable="d" Style="{StaticResource HighTitleWindow}"
-        Title="CADCanvas" Height="450" Width="800">
+        Title="CADCanvas" Height="450" Width="800"
+        PreviewKeyDown="MainWindow_PreviewKeyDown" PreviewKeyUp="MainWindow_PreviewKeyUp">
     <Grid x:Name="MainGrid"></Grid>
 </xw:XMainWindow>

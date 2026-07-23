@@ -1,4 +1,5 @@
 ﻿using CADCanvas.AppTool;
+using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
 
 namespace CADCanvas
@@ -18,6 +19,7 @@ namespace CADCanvas
         private void Init()
         {
             SystemDataDelegate.Instance.Init();
+            CursorManager.Instance.Init();
         }
     }
 }

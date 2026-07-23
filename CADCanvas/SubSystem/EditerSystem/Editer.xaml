@@ -37,7 +37,7 @@
             </Grid.ColumnDefinitions>
             <!-- 编辑区 -->
             <Grid Grid.Column="0">
-                <Grid x:Name="DocBox">
+                <Grid x:Name="DocBox" ClipToBounds="True">
                     <Grid x:Name="PaperBox" ClipToBounds="True"/>
                     <Grid x:Name="LayerBox"/>
                     <Grid x:Name="Layer_Mouse" Background="Transparent"/>

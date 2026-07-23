@@ -7,4 +7,5 @@
 #pragma comment(lib, "TKGeomBase.lib")
 #pragma comment(lib, "TKService.lib")
 #pragma comment(lib, "TKG2d.lib")
-#pragma comment(lib, "TKGeomAlgo.lib")
+
+#define dll_export extern "C" __declspec(dllexport)

@@ -126,14 +126,10 @@ namespace XLogic.Wpf.Tool
         /// </summary>
         public virtual void OnKeyDown(Key key) => _handler.HandleKeyDown(key.ToString());
 
-        public virtual void OnKeyDown(KeyEventArgs e) => _handler.HandleKeyDown(e.Key.ToString());
-
         /// <summary>
         /// 键盘松开
         /// </summary>
         public virtual void OnKeyUp(Key key) => _handler.HandleKeyUp(key.ToString());
-
-        public virtual void OnKeyUp(KeyEventArgs e) => _handler.HandleKeyUp(e.Key.ToString());
 
         /// <summary>
         /// 鼠标进入

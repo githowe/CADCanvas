@@ -9,6 +9,27 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     /// </summary>
     public class InteractionComponent : Component<Editer>
     {
+        #region 公开方法
+
+        public void HandleKeyDown(KeyEventArgs e)
+        {
+            // 全选
+            if (e.Key == Key.A && Keyboard.Modifiers == ModifierKeys.Control)
+            {
+
+            }
+            // 删除
+            else if (e.Key == Key.Delete)
+            {
+
+            }
+            else _toolComponent.CurrentTool.OnKeyDown(e.Key);
+        }
+
+        #endregion
+
+        #region 生命周期
+
         protected override void Init()
         {
             _host.Layer_Mouse.MouseDown += Layer_Mouse_MouseDown;
@@ -30,6 +51,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _toolComponent = null;
             _layerComponent = null;
         }
+
+        #endregion
 
         #region 控件事件
 
@@ -55,7 +78,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _layerComponent.UpdateGrid();
+            _layerComponent.UpdateAll();
         }
 
         #endregion

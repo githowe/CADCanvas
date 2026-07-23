@@ -1,6 +1,7 @@
 ﻿using CADCanvas.SubSystem.CacheSystem;
 using CADCanvas.SubSystem.EditerSystem;
 using System.Windows;
+using System.Windows.Input;
 using XLogic.Wpf.Window;
 
 namespace CADCanvas
@@ -26,6 +27,19 @@ namespace CADCanvas
 
             // 加载编辑器
             LoadEditer();
+        }
+
+        private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // 处理系统快捷键
+            HandleSystemShortcutKey(e);
+            if (e.Handled) return;
+            _editer?.HandleKeyDown(e);
+        }
+
+        private void MainWindow_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            _editer?.HandleKeyUp(e);
         }
 
         #endregion
@@ -83,6 +97,14 @@ namespace CADCanvas
                 CacheManager.Instance.Cache.MainWindow.Height = (int)Height;
                 CacheManager.Instance.Save();
             };
+        }
+
+        /// <summary>
+        /// 处理系统快捷键
+        /// </summary>
+        private void HandleSystemShortcutKey(KeyEventArgs e)
+        {
+
         }
 
         #endregion

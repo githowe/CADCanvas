@@ -1,0 +1,2 @@
+
+#define dll_export extern "C" __declspec(dllexport)

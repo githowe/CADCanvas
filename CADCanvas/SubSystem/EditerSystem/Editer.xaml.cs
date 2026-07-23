@@ -33,7 +33,7 @@ namespace CADCanvas.SubSystem.EditerSystem
 
         public void HandleKeyDown(KeyEventArgs e)
         {
-
+            _interactionComponent.HandleKeyDown(e);
         }
 
         public void HandleKeyUp(KeyEventArgs e)

@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Assets\" />
     <Folder Include="SubSystem\OptionSystem\Define\" />
   </ItemGroup>
 
@@ -34,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Cursor\Draw.cur" />
     <Resource Include="SubSystem\EditerSystem\Image\Circle.png" />
     <Resource Include="SubSystem\EditerSystem\Image\Line.png" />
   </ItemGroup>

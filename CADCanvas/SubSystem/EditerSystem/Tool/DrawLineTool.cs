@@ -1,4 +1,5 @@
 ﻿using CADCanvas.SubSystem.EditerSystem.Component;
+using System.Windows.Input;
 using XLogic.Wpf.Behavior;
 
 namespace CADCanvas.SubSystem.EditerSystem.Tool
@@ -76,7 +77,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             });
             BackToRoot();
             // 左键按下（设置下一点） -> 移动 -> 松开
-            NewTree(Behaviors.Move, (_) =>
+            NewNode(Behaviors.Move, (_) =>
             {
                 _host.LineTool_SelectNext();
             });
@@ -122,6 +123,30 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     Invoke("设置下一点");
                     break;
             }
+        }
+
+        public override void OnKeyDown(Key key)
+        {
+            if (key == Key.Escape)
+            {
+                switch (_stage)
+                {
+                    // 选择起点阶段：完成工具
+                    case DrawLineStage.SelectStart:
+                        Finished?.Invoke();
+                        break;
+                    // 选择下一点阶段：取消绘制并回到选择起点阶段
+                    case DrawLineStage.SelectNext:
+                        {
+                            ResetTree();
+                            _host.ReleaseOperationLayer();
+                            _host.LineTool_Cancel();
+                            _stage = DrawLineStage.SelectStart;
+                        }
+                        break;
+                }
+            }
+            base.OnKeyDown(key);
         }
 
         private DrawLineStage _stage = DrawLineStage.SelectStart;

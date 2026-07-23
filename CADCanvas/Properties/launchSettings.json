@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CADCanvas": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using CADCanvas.SubSystem.DrawingSystem;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using XLogic.Wpf.Drawing;
@@ -8,7 +9,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
     /// <summary>
     /// 网格图层
     /// </summary>
-    public class GridLayer : DrawingLayer
+    public class GridLayer : DrawingLayer, IWorldGrid
     {
         #region 构造方法
 
@@ -95,7 +96,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// <summary>
         /// 屏幕坐标转世界坐标
         /// </summary>
-        public Point ScreenToWorld(Point screenPoint)
+        public Point ToWorld(Point screenPoint)
         {
             Point worldPoint = new Point();
             double pixelPhysicsLength = (double)_gridPhysicsSize / _gridPixelSize;
