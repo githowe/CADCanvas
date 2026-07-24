@@ -13,8 +13,22 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     /// </summary>
     public class SceneComponent : Component<Editer>
     {
+        public void AddVisual(GeoVisual visual)
+        {
+            _visualList.Add(visual);
+        }
 
+        public void RemoveVisual(GeoVisual visual)
+        {
+            _visualList.Remove(visual);
+        }
 
-        private List<VisualLine> _listList = new List<VisualLine>();
+        public void ClearVisual()
+        {
+            _visualList.Clear();
+        }
+
+        /// <summary>可视对象列表</summary>
+        private readonly List<GeoVisual> _visualList = new List<GeoVisual>();
     }
 }
