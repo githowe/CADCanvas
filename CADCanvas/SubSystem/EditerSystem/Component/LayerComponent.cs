@@ -92,9 +92,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>
         /// 设置直线工具起点
         /// </summary>
-        public void SetLineToolStart()
+        public void SetLineToolStart(Point point)
         {
-            _lineToolLayer.StartPoint = GetWorldPoint();
+            _lineToolLayer.StartPoint = point;
         }
 
         /// <summary>

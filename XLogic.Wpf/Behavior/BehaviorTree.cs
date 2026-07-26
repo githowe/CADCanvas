@@ -1,4 +1,6 @@
-﻿namespace XLogic.Wpf.Behavior
+﻿using System.Windows.Input;
+
+namespace XLogic.Wpf.Behavior
 {
     /// <summary>
     /// 行为树
@@ -92,10 +94,10 @@
         /// <summary>
         /// 处理键盘按下
         /// </summary>
-        public void HandleKeyDown(string key)
+        public void HandleKeyDown(KeyEventArgs e)
         {
             if (!_current.Enabled) return;
-            _current?.KeyDown?.Invoke(key);
+            _current?.KeyDown?.Invoke(e);
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace XLogic.Wpf.Behavior
+﻿using System.Windows.Input;
+
+namespace XLogic.Wpf.Behavior
 {
     /// <summary>
     /// 行为节点
@@ -21,7 +23,7 @@
         public Action<BehaviorArgs?>? Action { get; set; }
 
         /// <summary>键盘按下</summary>
-        public Action<string>? KeyDown { get; set; }
+        public Action<KeyEventArgs>? KeyDown { get; set; }
 
         /// <summary>键盘松开</summary>
         public Action<string>? KeyUp { get; set; }

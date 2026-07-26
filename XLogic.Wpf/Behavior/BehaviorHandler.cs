@@ -1,4 +1,6 @@
-﻿namespace XLogic.Wpf.Behavior
+﻿using System.Windows.Input;
+
+namespace XLogic.Wpf.Behavior
 {
     /// <summary>
     /// 行为处理器
@@ -13,6 +15,9 @@
 
         /// <summary>异常处理器</summary>
         public static Action<Exception>? ExceptionHandler { get; set; } = null;
+
+        /// <summary>树根按键按下</summary>
+        public Action<KeyEventArgs>? TreeRootKeyDown { get; set; } = null;
 
         /// <summary>
         /// 重置
@@ -82,7 +87,11 @@
             }
         }
 
-        public void HandleKeyDown(string key) => _currentTree?.HandleKeyDown(key);
+        public void HandleKeyDown(KeyEventArgs e)
+        {
+            if (_currentTree != null) _currentTree.HandleKeyDown(e);
+            else TreeRootKeyDown?.Invoke(e);
+        }
 
         public void HandleKeyUp(string key) => _currentTree?.HandleKeyUp(key);
 

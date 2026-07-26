@@ -2,6 +2,7 @@
 using CADCanvas.SubSystem.EditerSystem.Tool;
 using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using XLogic.Base.UI;
 
@@ -39,6 +40,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public void ReleaseOperationLayer() => _host.Layer_Mouse.ReleaseMouseCapture();
 
         public void OnMouseMove() { }
+
+        public Point GetMousePoint() => Mouse.GetPosition(_host.Layer_Mouse);
+
+        public Point GetWorldPoint() => _layerComponent.GetWorldPoint();
 
         /// <summary>
         /// 开始拖动画布
@@ -84,6 +89,21 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _layerComponent.UpdateLayerPosition();
         }
 
+        public UserControl LoadControl(PopupType popupType, Point point)
+        {
+            return GetComponent<ControlComponent>().LoadControl(popupType, point);
+        }
+
+        public void MoveControl(Point point)
+        {
+            GetComponent<ControlComponent>().MoveControl(point);
+        }
+
+        public void UnloadControl(PopupType popupType)
+        {
+            GetComponent<ControlComponent>().UnloadControl(popupType);
+        }
+
         #endregion
 
         #region 选择工具方法
@@ -111,9 +131,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>
         /// 设置直线起点
         /// </summary>
-        public void LineTool_SetStart()
+        public void LineTool_SetStart(Point point)
         {
-            _layerComponent.SetLineToolStart();
+            _layerComponent.SetLineToolStart(point);
         }
 
         /// <summary>
@@ -142,7 +162,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
             // 清除直线工具并设置起点
             _layerComponent.ClearLineTool();
-            _layerComponent.SetLineToolStart();
+            _layerComponent.SetLineToolStart(end);
         }
 
         /// <summary>

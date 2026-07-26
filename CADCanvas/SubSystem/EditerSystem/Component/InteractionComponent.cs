@@ -23,7 +23,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             {
 
             }
-            else _toolComponent.CurrentTool.OnKeyDown(e.Key);
+            else _toolComponent.CurrentTool.OnKeyDown(e);
         }
 
         #endregion
@@ -32,6 +32,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         protected override void Init()
         {
+            _host.Layer_Mouse.MouseEnter += Layer_Mouse_MouseEnter;
+            _host.Layer_Mouse.MouseLeave += Layer_Mouse_MouseLeave;
             _host.Layer_Mouse.MouseDown += Layer_Mouse_MouseDown;
             _host.Layer_Mouse.MouseMove += Layer_Mouse_MouseMove;
             _host.Layer_Mouse.MouseUp += Layer_Mouse_MouseUp;
@@ -43,6 +45,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         protected override void Remove()
         {
+            _host.Layer_Mouse.MouseEnter -= Layer_Mouse_MouseEnter;
+            _host.Layer_Mouse.MouseLeave -= Layer_Mouse_MouseLeave;
             _host.Layer_Mouse.MouseDown -= Layer_Mouse_MouseDown;
             _host.Layer_Mouse.MouseMove -= Layer_Mouse_MouseMove;
             _host.Layer_Mouse.MouseUp -= Layer_Mouse_MouseUp;
@@ -55,6 +59,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         #endregion
 
         #region 控件事件
+
+        private void Layer_Mouse_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _toolComponent.CurrentTool.OnMouseEnter();
+        }
+
+        private void Layer_Mouse_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _toolComponent.CurrentTool.OnMouseLeave();
+        }
 
         private void Layer_Mouse_MouseDown(object sender, MouseButtonEventArgs e)
         {

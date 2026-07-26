@@ -124,7 +124,7 @@ namespace XLogic.Wpf.Tool
         /// <summary>
         /// 键盘按下
         /// </summary>
-        public virtual void OnKeyDown(Key key) => _handler.HandleKeyDown(key.ToString());
+        public virtual void OnKeyDown(KeyEventArgs e) => _handler.HandleKeyDown(e);
 
         /// <summary>
         /// 键盘松开
@@ -164,7 +164,7 @@ namespace XLogic.Wpf.Tool
         }
 
         /// <summary>行为处理器</summary>
-        private readonly BehaviorHandler _handler = new BehaviorHandler();
+        protected readonly BehaviorHandler _handler = new BehaviorHandler();
 
         #endregion
     }

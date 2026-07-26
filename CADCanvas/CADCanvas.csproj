@@ -13,6 +13,7 @@
     <None Remove="Assets\Cursor\Move.cur" />
     <None Remove="SubSystem\EditerSystem\Image\Circle.png" />
     <None Remove="SubSystem\EditerSystem\Image\Line.png" />
+    <None Remove="SubSystem\EditerSystem\Control\Image\Lock.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +40,7 @@
     <Resource Include="Assets\Cursor\Draw.cur" />
     <Resource Include="SubSystem\EditerSystem\Image\Circle.png" />
     <Resource Include="SubSystem\EditerSystem\Image\Line.png" />
+    <Resource Include="SubSystem\EditerSystem\Control\Image\Lock.png" />
   </ItemGroup>
 
 </Project>
