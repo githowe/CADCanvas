@@ -9,5 +9,10 @@
         mc:Ignorable="d" Style="{StaticResource HighTitleWindow}"
         Title="CADCanvas" Height="450" Width="800"
         PreviewKeyDown="MainWindow_PreviewKeyDown" PreviewKeyUp="MainWindow_PreviewKeyUp">
-    <Grid x:Name="MainGrid"></Grid>
+    <Grid x:Name="MainGrid">
+        <Grid x:Name="EditBox"></Grid>
+        <Grid x:Name="InfoBox">
+            <xwc:InfoBoard x:Name="InfoBoard" HorizontalAlignment="Left" VerticalAlignment="Bottom" MinWidth="200" Visibility="Collapsed"/>
+        </Grid>
+    </Grid>
 </xw:XMainWindow>

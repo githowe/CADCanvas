@@ -31,6 +31,11 @@ namespace XLogic.Wpf.Tool
         public abstract void Init();
 
         /// <summary>
+        /// 激活
+        /// </summary>
+        public virtual void Active() { }
+
+        /// <summary>
         /// 重置
         /// </summary>
         public virtual void Reset() => ResetTree();

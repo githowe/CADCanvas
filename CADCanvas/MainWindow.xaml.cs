@@ -1,4 +1,5 @@
 ﻿using CADCanvas.SubSystem.CacheSystem;
+using CADCanvas.SubSystem.DebugSystem;
 using CADCanvas.SubSystem.EditerSystem;
 using System.Windows;
 using System.Windows.Input;
@@ -25,6 +26,8 @@ namespace CADCanvas
             RecoverWindowState();
             ListenWindowResize();
 
+            // 设置调试信息面板
+            DebugInfoManager.Instance.SetInfoBoard(InfoBoard);
             // 加载编辑器
             LoadEditer();
         }
@@ -61,7 +64,7 @@ namespace CADCanvas
             {
                 Inited = Editer_Inited
             };
-            MainGrid.Children.Add(_editer);
+            EditBox.Children.Add(_editer);
         }
 
         /// <summary>
@@ -104,7 +107,11 @@ namespace CADCanvas
         /// </summary>
         private void HandleSystemShortcutKey(KeyEventArgs e)
         {
-
+            if (e.Key == Key.F2)
+            {
+                DebugInfoManager.Instance.ToggleInfoBoard();
+                e.Handled = true;
+            }
         }
 
         #endregion

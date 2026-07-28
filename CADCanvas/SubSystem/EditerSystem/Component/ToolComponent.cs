@@ -1,4 +1,5 @@
 ﻿using CADCanvas.SubSystem.DrawingSystem;
+using CADCanvas.SubSystem.EditerSystem.Layer;
 using CADCanvas.SubSystem.EditerSystem.Tool;
 using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
@@ -29,6 +30,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _currentTool?.Clear();
             _currentTool = tool;
             _host.Layer_Mouse.Cursor = tool.Cursor;
+            _currentTool.Active();
         }
 
         #endregion
@@ -44,6 +46,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public Point GetMousePoint() => Mouse.GetPosition(_host.Layer_Mouse);
 
         public Point GetWorldPoint() => _layerComponent.GetWorldPoint();
+
+        public Size GetLayerSize() => _host.Layer_Mouse.RenderSize;
+
+        public GridLayer GetGridLayer() => _layerComponent.GetGridLayer();
 
         /// <summary>
         /// 开始拖动画布
@@ -99,6 +105,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             GetComponent<ControlComponent>().MoveControl(point);
         }
 
+        public void SetControlSize(double width, double height)
+        {
+            GetComponent<ControlComponent>().SetControlSize(width, height);
+        }
+
         public void UnloadControl(PopupType popupType)
         {
             GetComponent<ControlComponent>().UnloadControl(popupType);
@@ -134,6 +145,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public void LineTool_SetStart(Point point)
         {
             _layerComponent.SetLineToolStart(point);
+        }
+
+        /// <summary>
+        /// 获取起点屏幕坐标
+        /// </summary>
+        public Point LineTool_GetStartScreenPoint()
+        {
+            return _layerComponent.GetLineToolStartScreenPoint();
         }
 
         /// <summary>

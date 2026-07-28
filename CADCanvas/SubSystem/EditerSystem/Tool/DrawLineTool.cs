@@ -1,4 +1,5 @@
-﻿using CADCanvas.SubSystem.EditerSystem.Component;
+﻿using CADCanvas.SubSystem.DebugSystem;
+using CADCanvas.SubSystem.EditerSystem.Component;
 using CADCanvas.SubSystem.EditerSystem.Control;
 using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
@@ -31,13 +32,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             NewTree(Behaviors.Enter, (_) =>
             {
                 ResetTree();
-                Point point = _host.GetMousePoint().OffsetPoint(20, 20);
-                if (_pointPopup == null)
+                if (_stage == DrawLineStage.SelectStart)
                 {
-                    _pointPopup = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
-                    _pointPopup?.UpdatePoint(_host.GetWorldPoint());
-                    if (_pointPopup != null)
-                        _pointPopup.Loaded += (s, e) => _pointPopup.FocusX();
+                    Point point = _host.GetMousePoint().OffsetPoint(20, 20);
+                    if (_pointPopup == null)
+                    {
+                        _pointPopup = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
+                        _pointPopup?.UpdatePoint(_host.GetWorldPoint());
+                        if (_pointPopup != null)
+                            _pointPopup.Loaded += (s, e) => _pointPopup.FocusX();
+                    }
                 }
             });
             Finish();
@@ -60,6 +64,21 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                         break;
                     case DrawLineStage.SelectNext:
                         _host.LineTool_SelectNext();
+                        if (_lineInfoPopup == null)
+                        {
+                            _lineInfoPopup = (LineInfoPopup?)_host.LoadControl(PopupType.DrawLineInfo, new Point());
+                            _lineInfoPopup.Grid = _host.GetGridLayer();
+                            _lineInfoPopup.Init();
+                            Size size = _host.GetLayerSize();
+                            _host.SetControlSize(size.Width, size.Height);
+                            _lineInfoPopup.Loaded += (s, e) => _lineInfoPopup.InitFocus();
+                        }
+                        else
+                        {
+                            _lineInfoPopup.StartPoint = _host.LineTool_GetStartScreenPoint();
+                            _lineInfoPopup.EndPoint = _host.GetMousePoint();
+                            _lineInfoPopup.UpdateLineInfo();
+                        }
                         break;
                 }
                 _host.OnMouseMove();
@@ -149,6 +168,15 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             _handler.TreeRootKeyDown = HandleTreeRootKeyDown;
         }
 
+        public override void Active()
+        {
+            DebugInfoManager manager = DebugInfoManager.Instance;
+            manager.AddInfo("起点坐标", "终点坐标", "");
+            manager.AddInfo("垂直偏移", "水平偏移", "");
+            manager.AddInfo("终点位置", "斜边长度", "斜边弧度", "斜边角度", "旋转后角度", "");
+            manager.AddInfo("旋转后横坐标偏移", "旋转后纵坐标偏移", "");
+        }
+
         public override void OnLeftButtonDown(BehaviorArgs? args = null)
         {
             switch (_stage)
@@ -173,6 +201,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     case DrawLineStage.SelectStart:
                         _host.UnloadControl(PopupType.PointPopup);
                         _pointPopup = null;
+                        DebugInfoManager.Instance.ClearInfo();
                         Finished?.Invoke();
                         break;
                     // 选择下一点阶段：取消绘制并回到选择起点阶段
@@ -182,7 +211,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                             _host.ReleaseOperationLayer();
                             _host.LineTool_Cancel();
                             _stage = DrawLineStage.SelectStart;
-                            // 重新加载控件
+                            // 卸载直线信息控件
+                            _host.UnloadControl(PopupType.DrawLineInfo);
+                            _lineInfoPopup = null;
+                            // 重新加载坐标控件
                             Point point = _host.GetMousePoint().OffsetPoint(20, 20);
                             _pointPopup = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
                             _pointPopup?.UpdatePoint(_host.GetWorldPoint());
@@ -209,6 +241,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                         _pointPopup?.SwitchFocus();
                         break;
                     case DrawLineStage.SelectNext:
+                        _lineInfoPopup?.SwitchFocus();
                         break;
                 }
             }
@@ -240,6 +273,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         private DrawLineStage _stage = DrawLineStage.SelectStart;
 
         private PointPopup? _pointPopup = null;
+        private LineInfoPopup? _lineInfoPopup = null;
 
         #endregion
     }

@@ -21,6 +21,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public Point GetWorldPoint() => _gridLayer.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
 
+        public GridLayer GetGridLayer() => _gridLayer;
+
         public void UpdateGrid()
         {
             _gridLayer.Width = _host.LayerBox.ActualWidth;
@@ -88,6 +90,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// 获取直线工具起点
         /// </summary>
         public Point GetLineToolStart() => _lineToolLayer.StartPoint.Value;
+
+        public Point GetLineToolStartScreenPoint() => _gridLayer.ToScreen(_lineToolLayer.StartPoint.Value);
 
         /// <summary>
         /// 设置直线工具起点

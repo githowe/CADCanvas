@@ -40,6 +40,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _control.Margin = new Thickness(point.X, point.Y, 0, 0);
         }
 
+        public void SetControlSize(double width, double height)
+        {
+            if (_control == null) return;
+            _control.Width = width;
+            _control.Height = height;
+        }
+
         /// <summary>
         /// 卸载控件
         /// </summary>
@@ -58,6 +65,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         {
             // 注册控件
             _popupControls.Add(PopupType.PointPopup, CreatePointPopup);
+            _popupControls.Add(PopupType.DrawLineInfo, CreateLineInfoPopup);
         }
 
         #endregion
@@ -65,6 +73,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         #region 私有方法
 
         private UserControl CreatePointPopup() => new Control.PointPopup();
+
+        private UserControl CreateLineInfoPopup() => new Control.LineInfoPopup();
 
         #endregion
 
