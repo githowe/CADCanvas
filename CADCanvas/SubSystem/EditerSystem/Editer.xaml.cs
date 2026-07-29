@@ -75,6 +75,7 @@ namespace CADCanvas.SubSystem.EditerSystem
 
         public void LoadDocument()
         {
+            _componentBox.Enable();
             _editerComponent.LoadDocument();
         }
 

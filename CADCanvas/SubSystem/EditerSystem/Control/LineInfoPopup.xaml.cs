@@ -1,6 +1,4 @@
-﻿using CADCanvas.SubSystem.EditerSystem.Control.Layer;
-using CADCanvas.SubSystem.EditerSystem.Layer;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace CADCanvas.SubSystem.EditerSystem.Control
@@ -14,29 +12,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
 
     public partial class LineInfoPopup : UserControl
     {
-        public LineInfoPopup()
-        {
-            InitializeComponent();
-        }
-
-        #region 属性
-
-        public GridLayer Grid { get; set; } = null;
-
-        public Point StartPoint { get; set; } = new Point();
-
-        public Point EndPoint { get; set; } = new Point();
-
-        #endregion
-
-        public void Init()
-        {
-            if (Grid == null) throw new Exception("未设置网格图层");
-
-            LayerBox.Children.Add(_lineInfoLayer);
-            _lineInfoLayer.Init();
-            _lineInfoLayer.Grid = Grid;
-        }
+        public LineInfoPopup() => InitializeComponent();
 
         public void InitFocus()
         {
@@ -62,28 +38,20 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
             }
         }
 
-        public void UpdateLineInfo()
+        public void UpdateLineInfo(double lineLength, Point lineCenter, double lineAngle, Point arcCenter)
         {
-            // 更新标注线
-            _lineInfoLayer.Width = ActualWidth;
-            _lineInfoLayer.Height = ActualHeight;
-            _lineInfoLayer.StartPoint = StartPoint;
-            _lineInfoLayer.EndPoint = EndPoint;
-            _lineInfoLayer.Update();
             // 更新长度输入框
-            Point lineCenter = _lineInfoLayer.GetLineCenter();
             double inputWidth = Grid_Length.ActualWidth;
             double inputHeight = Grid_Length.ActualHeight;
             Canvas.SetLeft(Grid_Length, Math.Round(lineCenter.X - inputWidth / 2));
             Canvas.SetTop(Grid_Length, Math.Round(lineCenter.Y - inputHeight / 2));
-            Input_Length.Text = _lineInfoLayer.GetLineLength().ToString(_format);
+            Input_Length.Text = lineLength.ToString(_format);
             // 更新角度输入框
-            Point arcCenter = _lineInfoLayer.GetArcCenter();
             double arcInputWidth = Grid_Angle.ActualWidth;
             double arcInputHeight = Grid_Angle.ActualHeight;
             Canvas.SetLeft(Grid_Angle, Math.Round(arcCenter.X - arcInputWidth / 2));
             Canvas.SetTop(Grid_Angle, Math.Round(arcCenter.Y - arcInputHeight / 2));
-            Input_Angle.Text = _lineInfoLayer.GetLineAngle().ToString(_angleFormat);
+            Input_Angle.Text = lineAngle.ToString(_angleFormat);
 
             switch (_focus)
             {
@@ -96,7 +64,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
             }
         }
 
-        private readonly LineInfoLayer _lineInfoLayer = new LineInfoLayer();
         private readonly string _format = "0.#####";
         private readonly string _angleFormat = "0.##";
 

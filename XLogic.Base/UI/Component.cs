@@ -84,12 +84,12 @@
 
         #endregion
 
-        #region 内部方法
+        #region 公开方法
 
         /// <summary>
         /// 获取组件
         /// </summary>
-        protected TComponent GetComponent<TComponent>() where TComponent : Component<THost>
+        public TComponent GetComponent<TComponent>() where TComponent : Component<THost>
         {
             return _box.GetComponent<TComponent>();
         }

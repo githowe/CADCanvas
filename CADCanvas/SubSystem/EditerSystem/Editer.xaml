@@ -42,6 +42,7 @@
                     <Grid x:Name="LayerBox"/>
                     <Grid x:Name="Layer_Mouse" Background="Transparent"/>
                     <Grid x:Name="Layer_Control"/>
+                    <Grid x:Name="Layer_Guides"/>
                 </Grid>
             </Grid>
             <!-- 属性面板 -->

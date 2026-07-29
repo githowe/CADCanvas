@@ -12,6 +12,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     /// </summary>
     public class LayerComponent : Component<Editer>
     {
+        #region 图层
+
+        public GridLayer GridLayer => _gridLayer;
+
+        public GraphicLayer GraphicLayer => _graphicLayer;
+
+        public LineToolLayer LineToolLayer => _lineToolLayer;
+
+        #endregion
+
         #region 公开方法
 
         public Point GetScreenPoint() => Mouse.GetPosition(_host.Layer_Mouse);

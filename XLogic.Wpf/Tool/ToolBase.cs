@@ -31,7 +31,12 @@ namespace XLogic.Wpf.Tool
         public abstract void Init();
 
         /// <summary>
-        /// 激活
+        /// 在初始化后调用，应该在该方法中引用其他对象
+        /// </summary>
+        public virtual void Enable() { }
+
+        /// <summary>
+        /// 激活。应该切换至该工具时调用
         /// </summary>
         public virtual void Active() { }
 

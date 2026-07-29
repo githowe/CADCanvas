@@ -16,9 +16,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     {
         #region 属性
 
-        /// <summary>当前工具</summary>
-        public CanvasToolBase? CurrentTool => _currentTool;
-
         public DrawLineTool DrawLineTool => _drawLineTool;
 
         #endregion
@@ -35,7 +32,25 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         #endregion
 
-        #region 通用工具方法 
+        #region 输入处理
+
+        public void HandleKeyDown(KeyEventArgs e) => _currentTool.OnKeyDown(e);
+
+        public void HandleMouseEnter() => _currentTool.OnMouseEnter();
+
+        public void HandleMouseLeave() => _currentTool.OnMouseLeave();
+
+        public void HandleMouseMove() => _currentTool.OnMouseMove();
+
+        public void HandleMouseDown(MouseButton button) => _currentTool.OnMouseDown(button);
+
+        public void HandleMouseUp(MouseButton button) => _currentTool.OnMouseUp(button);
+
+        public void HandleMouseWheel(MouseWheelEventArgs e) => _currentTool.OnMouseWheel(e);
+
+        #endregion
+
+        #region 通用工具方法
 
         public void CaptureOperationLayer() => _host.Layer_Mouse.CaptureMouse();
 
@@ -82,7 +97,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void EndDragCanvas()
         {
-            _host.Layer_Mouse.Cursor = CurrentTool.Cursor;
+            _host.Layer_Mouse.Cursor = _currentTool.Cursor;
             _layerComponent.ApplyMoveGrid();
         }
 
@@ -140,31 +155,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         }
 
         /// <summary>
-        /// 设置直线起点
-        /// </summary>
-        public void LineTool_SetStart(Point point)
-        {
-            _layerComponent.SetLineToolStart(point);
-        }
-
-        /// <summary>
-        /// 获取起点屏幕坐标
-        /// </summary>
-        public Point LineTool_GetStartScreenPoint()
-        {
-            return _layerComponent.GetLineToolStartScreenPoint();
-        }
-
-        /// <summary>
-        /// 选择下一点
-        /// </summary>
-        public void LineTool_SelectNext()
-        {
-            _layerComponent.SetLineToolEnd();
-            _layerComponent.UpdateLineTool();
-        }
-
-        /// <summary>
         /// 设置下一点
         /// </summary>
         public void LineTool_SetNext()
@@ -184,14 +174,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _layerComponent.SetLineToolStart(end);
         }
 
-        /// <summary>
-        /// 取消绘制直线
-        /// </summary>
-        public void LineTool_Cancel()
-        {
-            _layerComponent.ClearLineTool();
-        }
-
         #endregion
 
         #region 生命周期
@@ -206,6 +188,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             SwitchTool(_selectTool);
 
             _layerComponent = GetComponent<LayerComponent>();
+        }
+
+        protected override void Enable()
+        {
+            _selectTool.Enable();
+            _drawLineTool.Enable();
         }
 
         #endregion
@@ -224,7 +212,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         private SelectTool _selectTool;
         private DrawLineTool _drawLineTool;
 
-        private CanvasToolBase? _currentTool = null;
+        private CanvasToolBase _currentTool;
 
         /// <summary>鼠标按下时的坐标</summary>
         private Point _mouseDown = new Point();

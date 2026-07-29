@@ -23,7 +23,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             {
 
             }
-            else _toolComponent.CurrentTool.OnKeyDown(e);
+            else _toolComponent.HandleKeyDown(e);
         }
 
         #endregion
@@ -62,32 +62,32 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         private void Layer_Mouse_MouseEnter(object sender, MouseEventArgs e)
         {
-            _toolComponent.CurrentTool.OnMouseEnter();
+            _toolComponent.HandleMouseEnter();
         }
 
         private void Layer_Mouse_MouseLeave(object sender, MouseEventArgs e)
         {
-            _toolComponent.CurrentTool.OnMouseLeave();
+            _toolComponent.HandleMouseLeave();
         }
 
         private void Layer_Mouse_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            _toolComponent.CurrentTool.OnMouseDown(e.ChangedButton);
+            _toolComponent.HandleMouseDown(e.ChangedButton);
         }
 
         private void Layer_Mouse_MouseMove(object sender, MouseEventArgs e)
         {
-            _toolComponent.CurrentTool.OnMouseMove();
+            _toolComponent.HandleMouseMove();
         }
 
         private void Layer_Mouse_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            _toolComponent.CurrentTool.OnMouseUp(e.ChangedButton);
+            _toolComponent.HandleMouseUp(e.ChangedButton);
         }
 
         private void Layer_Mouse_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            _toolComponent.CurrentTool.OnMouseWheel(e);
+            _toolComponent.HandleMouseWheel(e);
         }
 
         private void MainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
