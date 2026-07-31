@@ -20,6 +20,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public LineToolLayer LineToolLayer => _lineToolLayer;
 
+        public PolarTrackingLayer PolarTrackingLayer => _polarTrackingLayer;
+
+        public CatchMarkLayer CatchMarkLayer => _catchMarkLayer;
+
         #endregion
 
         #region 公开方法
@@ -30,8 +34,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// 获取当前鼠标的世界坐标
         /// </summary>
         public Point GetWorldPoint() => _gridLayer.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
-
-        public GridLayer GetGridLayer() => _gridLayer;
 
         public void UpdateGrid()
         {
@@ -99,16 +101,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>
         /// 获取直线工具起点
         /// </summary>
-        public Point GetLineToolStart() => _lineToolLayer.StartPoint.Value;
+        public Point GetLineToolStart() => _lineToolLayer.WorldStart.Value;
 
-        public Point GetLineToolStartScreenPoint() => _gridLayer.ToScreen(_lineToolLayer.StartPoint.Value);
+        /// <summary>
+        /// 获取直线工具终点
+        /// </summary>
+        public Point GetLineToolEnd() => _lineToolLayer.WorldEnd.Value;
 
         /// <summary>
         /// 设置直线工具起点
         /// </summary>
         public void SetLineToolStart(Point point)
         {
-            _lineToolLayer.StartPoint = point;
+            _lineToolLayer.WorldStart = point;
         }
 
         /// <summary>
@@ -116,22 +121,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void ClearLineTool()
         {
-            _lineToolLayer.StartPoint = null;
-            _lineToolLayer.EndPoint = null;
+            _lineToolLayer.WorldStart = null;
+            _lineToolLayer.WorldEnd = null;
             _lineToolLayer.Clear();
-        }
-
-        /// <summary>
-        /// 设置直线工具终点
-        /// </summary>
-        public void SetLineToolEnd()
-        {
-            _lineToolLayer.EndPoint = GetWorldPoint();
-        }
-
-        public void UpdateLineTool()
-        {
-            _lineToolLayer.Update();
         }
 
         #endregion
@@ -156,17 +148,48 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _host.LayerBox.Children.Add(_lineToolLayer);
             _lineToolLayer.Init();
             _layerList.Add(_lineToolLayer);
+
+            _polarTrackingLayer = new PolarTrackingLayer();
+            _host.Layer_Mark.Children.Add(_polarTrackingLayer);
+            _polarTrackingLayer.Init();
+            _layerList.Add(_polarTrackingLayer);
+
+            _catchMarkLayer = new CatchMarkLayer();
+            _host.Layer_Mark.Children.Add(_catchMarkLayer);
+            _catchMarkLayer.Init();
+            _layerList.Add(_catchMarkLayer);
         }
 
         #endregion
 
-        #region 字段
+        #region 图层
 
+        #region 绘图图层
+
+        /// <summary>网格</summary>
         private GridLayer? _gridLayer;
+        /// <summary>图形 </summary>
         private GraphicLayer? _graphicLayer;
 
+        #endregion
+
+        #region 工具图层
+
+        /// <summary>直线工具</summary>
         private LineToolLayer? _lineToolLayer;
 
+        #endregion
+
+        #region 标记图层
+
+        /// <summary>极轴追踪</summary>
+        private PolarTrackingLayer? _polarTrackingLayer;
+        /// <summary>捕捉标记</summary>
+        private CatchMarkLayer? _catchMarkLayer;
+
+        #endregion
+
+        /// <summary>图层列表</summary>
         private readonly List<DrawingLayer> _layerList = new List<DrawingLayer>();
 
         #endregion

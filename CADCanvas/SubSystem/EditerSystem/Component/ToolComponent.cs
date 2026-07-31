@@ -64,8 +64,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public Size GetLayerSize() => _host.Layer_Mouse.RenderSize;
 
-        public GridLayer GetGridLayer() => _layerComponent.GetGridLayer();
-
         /// <summary>
         /// 开始拖动画布
         /// </summary>
@@ -161,7 +159,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         {
             // 获取起点与终点
             Point start = _layerComponent.GetLineToolStart();
-            Point end = _layerComponent.GetWorldPoint();
+            Point end = _layerComponent.GetLineToolEnd();
             // 创建直线
             VisualLine line = GeoCreator.Instance.CreateLine(start.X, start.Y, end.X, end.Y);
             // 添加直线

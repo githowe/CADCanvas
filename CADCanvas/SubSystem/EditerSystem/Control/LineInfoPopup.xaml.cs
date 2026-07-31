@@ -46,12 +46,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
             Canvas.SetLeft(Grid_Length, Math.Round(lineCenter.X - inputWidth / 2));
             Canvas.SetTop(Grid_Length, Math.Round(lineCenter.Y - inputHeight / 2));
             Input_Length.Text = lineLength.ToString(_format);
+            Grid_Length.Visibility = Visibility.Visible;
             // 更新角度输入框
             double arcInputWidth = Grid_Angle.ActualWidth;
             double arcInputHeight = Grid_Angle.ActualHeight;
             Canvas.SetLeft(Grid_Angle, Math.Round(arcCenter.X - arcInputWidth / 2));
             Canvas.SetTop(Grid_Angle, Math.Round(arcCenter.Y - arcInputHeight / 2));
             Input_Angle.Text = lineAngle.ToString(_angleFormat);
+            Grid_Angle.Visibility = Visibility.Visible;
 
             switch (_focus)
             {

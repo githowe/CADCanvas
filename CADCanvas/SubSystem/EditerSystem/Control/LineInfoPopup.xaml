@@ -10,7 +10,7 @@
         <Grid x:Name="LayerBox"></Grid>
         <Canvas>
             <!-- 长度 -->
-            <Grid x:Name="Grid_Length" Canvas.Left="10" Canvas.Top="10">
+            <Grid x:Name="Grid_Length" Canvas.Left="10" Canvas.Top="10" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition />
@@ -27,7 +27,7 @@
                 </Grid>
             </Grid>
             <!-- 角度 -->
-            <Grid x:Name="Grid_Angle" Canvas.Left="10" Canvas.Top="45">
+            <Grid x:Name="Grid_Angle" Canvas.Left="10" Canvas.Top="45" Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition />
@@ -36,7 +36,7 @@
                 <Border Background="#2b2b2b" BorderThickness="1" BorderBrush="#464646" Visibility="Collapsed">
                     <Label Foreground="White" Content="角度" Padding="0" VerticalAlignment="Center" FontSize="12" Margin="6,0"/>
                 </Border>
-                <Grid Margin="0,0,0,0" Width="80" Height="25" Grid.Column="1">
+                <Grid Margin="0,0,0,0" Width="60" Height="25" Grid.Column="1">
                     <!-- 输入框 -->
                     <TextBox x:Name="Input_Angle"/>
                     <!-- 锁 -->

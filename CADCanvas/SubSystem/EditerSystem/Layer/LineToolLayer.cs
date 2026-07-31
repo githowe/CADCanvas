@@ -15,20 +15,46 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         public GridLayer? Grid { get; set; } = null;
 
         /// <summary>起点世界坐标</summary>
-        public Point? StartPoint { get; set; } = null;
+        public Point? WorldStart
+        {
+            get => _worldStart;
+            set
+            {
+                _worldStart = value;
+                if (_worldStart.HasValue)
+                    ScreenStart = Grid.ToScreen(_worldStart.Value);
+            }
+        }
 
         /// <summary>终点世界坐标</summary>
-        public Point? EndPoint { get; set; } = null;
+        public Point? WorldEnd
+        {
+            get => _worldEnd;
+            set
+            {
+                _worldEnd = value;
+                if (_worldEnd.HasValue)
+                    ScreenEnd = Grid.ToScreen(_worldEnd.Value);
+            }
+        }
 
-        public Point ScreenStart { get; set; } = new Point();
+        /// <summary>起点屏幕坐标</summary>
+        public Point ScreenStart { get; private set; } = new Point();
 
-        public Point ScreenEnd { get; set; } = new Point();
+        /// <summary>终点屏幕坐标</summary>
+        public Point ScreenEnd { get; private set; } = new Point();
 
         /// <summary>直线长度</summary>
         public double LineLength { get; private set; } = 0;
 
+        /// <summary>固定长度</summary>
+        public double FixedLength { get; set; } = double.NaN;
+
         /// <summary>直线角度</summary>
         public double LineAngle { get; private set; } = 0;
+
+        /// <summary>固定角度</summary>
+        public double FixedAngle { get; set; } = double.NaN;
 
         /// <summary>直线中点</summary>
         public Point LineCenter
@@ -68,31 +94,49 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             _positionName.Add(EndPosition.Origin, "原点");
         }
 
+        /// <summary>
+        /// 更新直线长度
+        /// </summary>
+        public void UpdateLineLength()
+        {
+            if (WorldStart == null || WorldEnd == null)
+                return;
+
+            // 计算直线长度
+            double dx = WorldEnd.Value.X - WorldStart.Value.X;
+            double dy = WorldEnd.Value.Y - WorldStart.Value.Y;
+            LineLength = Math.Sqrt(dx * dx + dy * dy);
+        }
+
+        public void SnapTo(double angle)
+        {
+            // 获取起点、长度
+            Point start = WorldStart.Value;
+            double length = LineLength;
+            // 计算终点
+            double radians = angle * Math.PI / 180;
+            double endX = start.X + length * Math.Cos(radians);
+            double endY = start.Y - length * Math.Sin(radians);
+            WorldEnd = new Point(endX, endY);
+        }
+
         #endregion
 
         #region 内部方法
 
         protected override void OnUpdate()
         {
-            if (StartPoint == null || EndPoint == null)
+            if (WorldStart == null || WorldEnd == null)
                 return;
-
-            ScreenStart = Grid.ToScreen(StartPoint.Value);
-            ScreenEnd = Grid.ToScreen(EndPoint.Value);
 
             // 绘制直线
             _dc.DrawLine(_linePen, ScreenStart, ScreenEnd);
 
-            // 计算直线长度
-            double dx = EndPoint.Value.X - StartPoint.Value.X;
-            double dy = EndPoint.Value.Y - StartPoint.Value.Y;
-            LineLength = Math.Sqrt(dx * dx + dy * dy);
-
             List<LineInfo> LineList = new List<LineInfo>();
             ArcInfo arcInfo = new ArcInfo();
 
-            _manager.UpdateInfo("起点坐标", $"({ScreenStart.X}, {ScreenStart.Y})");
-            _manager.UpdateInfo("终点坐标", $"({ScreenEnd.X}, {ScreenEnd.Y})");
+            _manager.UpdateInfo("起点坐标", $"({ScreenStart.X:0.####}, {ScreenStart.Y:0.####})");
+            _manager.UpdateInfo("终点坐标", $"({ScreenEnd.X:0.####}, {ScreenEnd.Y:0.####})");
 
             EndPosition position = GetEndPosition();
             _manager.UpdateInfo("终点位置", _positionName[position]);
@@ -150,7 +194,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
                         ArcCenter = new Point(arcCenterX, arcCenterY);
                         double 角度 = 斜边弧度 * 180 / Math.PI;
                         LineAngle = 角度;
-                        _manager.UpdateInfo("斜边弧度", $"{斜边弧度:0.######}°");
+                        _manager.UpdateInfo("斜边弧度", $"{斜边弧度:0.####}°");
                         _manager.UpdateInfo("斜边角度", $"{角度:0.##}°");
                         // 逆时针旋转90度
                         double 旋转后弧度 = 斜边弧度 + Math.PI / 2;
@@ -333,6 +377,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
 
         private Point _lineStart;
         private Point _lineEnd;
+
+        #endregion
+
+        #region 属性字段
+
+        private Point? _worldStart = null;
+        private Point? _worldEnd = null;
 
         #endregion
     }

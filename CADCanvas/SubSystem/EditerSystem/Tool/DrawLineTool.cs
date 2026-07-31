@@ -65,17 +65,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                         break;
                     case DrawLineStage.SelectNext:
                         SelectNext();
-                        if (_lineInfoPopup == null)
-                        {
-                            _lineInfoPopup = (LineInfoPopup?)_host.LoadControl(PopupType.DrawLineInfo, new Point());
-                            Size size = _host.GetLayerSize();
-                            _host.SetControlSize(size.Width, size.Height);
-                            _lineInfoPopup.Loaded += (s, e) => _lineInfoPopup.InitFocus();
-                        }
-                        else
-                        {
-                            _lineInfoPopup.UpdateLineInfo(_layer.LineLength, _layer.LineCenter, _layer.LineAngle, _layer.ArcCenter);
-                        }
                         break;
                 }
                 _host.OnMouseMove();
@@ -86,7 +75,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             NewTree("设置起点", (_) =>
             {
                 _host.CaptureOperationLayer();
-                _layer.StartPoint = _pointPopup.Point;
+                _layer.WorldStart = _pointPopup.Point;
                 _host.UnloadControl(PopupType.PointPopup);
                 _pointPopup = null;
             });
@@ -95,7 +84,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                 ResetTree();
                 _host.ReleaseOperationLayer();
                 _stage = DrawLineStage.SelectNext;
-                SelectNext();
             });
             BackToRoot();
             // 左键按下（设置起点） -> 移动 -> 松开
@@ -168,7 +156,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         public override void Enable()
         {
             _layer = _host.GetComponent<LayerComponent>().LineToolLayer;
-            
+            _polarLayer = _host.GetComponent<LayerComponent>().PolarTrackingLayer;
         }
 
         public override void Active()
@@ -178,6 +166,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             manager.AddInfo("垂直偏移", "水平偏移", "");
             manager.AddInfo("终点位置", "斜边长度", "斜边弧度", "斜边角度", "旋转后角度", "");
             manager.AddInfo("旋转后横坐标偏移", "旋转后纵坐标偏移", "");
+            manager.AddInfo("极轴追踪", "");
         }
 
         public override void OnLeftButtonDown(BehaviorArgs? args = null)
@@ -217,6 +206,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                             // 卸载直线信息控件
                             _host.UnloadControl(PopupType.DrawLineInfo);
                             _lineInfoPopup = null;
+                            // 清空极轴追踪图层
+                            _polarLayer.Clear();
                             // 重新加载坐标控件
                             Point point = _host.GetMousePoint().OffsetPoint(20, 20);
                             _pointPopup = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
@@ -256,7 +247,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     case DrawLineStage.SelectStart:
                         {
                             // 设置起点并卸载控件
-                            _layer.StartPoint = _pointPopup.Point;
+                            _layer.WorldStart = _pointPopup.Point;
                             _host.UnloadControl(PopupType.PointPopup);
                             _pointPopup = null;
                             // 进入选择下一点阶段
@@ -278,8 +269,28 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         /// </summary>
         private void SelectNext()
         {
-            _layer.EndPoint = _host.GetWorldPoint();
+            // 设置世界终点并更新直线长度
+            _layer.WorldEnd = _host.GetWorldPoint();
+            _layer.UpdateLineLength();
+
+            // 直线信息控件为空，则加载直线信息控件
+            if (_lineInfoPopup == null)
+            {
+                _lineInfoPopup = (LineInfoPopup?)_host.LoadControl(PopupType.DrawLineInfo, new Point());
+                Size size = _host.GetLayerSize();
+                _host.SetControlSize(size.Width, size.Height);
+                _lineInfoPopup.Loaded += (s, e) => _lineInfoPopup.InitFocus();
+            }
+
+            // 更新极轴追踪图层
+            double angle = _polarLayer.UpdateTrackingAngle(_layer.ScreenStart, _layer.ScreenEnd);
+            _polarLayer.Update();
+            // 对齐追踪角度
+            if (_polarLayer.Snaped) _layer.SnapTo(angle);
+            // 更新直线
             _layer.Update();
+            // 更新直线信息控件
+            _lineInfoPopup.UpdateLineInfo(_layer.LineLength, _layer.LineCenter, _layer.LineAngle, _layer.ArcCenter);
         }
 
         /// <summary>
@@ -287,8 +298,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         /// </summary>
         private void CancelDraw()
         {
-            _layer.StartPoint = null;
-            _layer.EndPoint = null;
+            _layer.WorldStart = null;
+            _layer.WorldEnd = null;
             _layer.Clear();
         }
 
@@ -299,6 +310,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         private DrawLineStage _stage = DrawLineStage.SelectStart;
 
         private LineToolLayer? _layer = null;
+        private PolarTrackingLayer? _polarLayer = null;
         private PointPopup? _pointPopup = null;
         private LineInfoPopup? _lineInfoPopup = null;
 

@@ -8,13 +8,9 @@ using XLogic.Wpf.Drawing;
 namespace CADCanvas.SubSystem.EditerSystem.Layer
 {
     /// <summary>
-    /// 引导线图层
+    /// 捕捉标记
     /// </summary>
-    public class GuideLineLayer : DrawingLayer
+    public class CatchMarkLayer : DrawingLayer
     {
-        public override void Init()
-        {
-            
-        }
     }
 }
