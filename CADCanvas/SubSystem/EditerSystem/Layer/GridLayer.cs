@@ -122,8 +122,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         {
             Point screenPoint = new Point();
             double pixelPhysicsLength = (double)_gridPhysicsSize / _gridPixelSize;
-            screenPoint.X = x / pixelPhysicsLength + Center.X;
-            screenPoint.Y = y / pixelPhysicsLength + Center.Y;
+            screenPoint.X = x / pixelPhysicsLength + Center.X + 0.5;
+            screenPoint.Y = y / pixelPhysicsLength + Center.Y + 0.5;
             return screenPoint;
         }
 
@@ -248,7 +248,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DrawHorizontalLine(double y)
         {
-            double realy = _drawStart.Y + y;
+            double realy = _drawStart.Y + y + 0.5;
             if (realy < 0 || realy > Height || _dc == null) return;
             _dc.DrawLine(_currentPen, new Point(0, realy), new Point(Width, realy));
         }
@@ -259,7 +259,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void DrawVerticalLine(double x)
         {
-            double realx = _drawStart.X + x;
+            double realx = _drawStart.X + x + 0.5;
             if (realx < 0 || realx > Width || _dc == null) return;
             _dc.DrawLine(_currentPen, new Point(realx, 0), new Point(realx, Height));
         }
@@ -269,10 +269,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         #region 画笔
 
         // 网格线
-        private readonly Pen _normalLine = new(new SolidColorBrush(Color.FromArgb(255, 30, 30, 30)), 2);
-        private readonly Pen _microLine = new(new SolidColorBrush(Color.FromArgb(255, 20, 20, 20)), 2);
-        private readonly Pen _centerLine = new(new SolidColorBrush(Color.FromArgb(255, 103, 43, 45)), 2);
-        private readonly Pen _centerList = new(new SolidColorBrush(Color.FromArgb(255, 42, 104, 45)), 2);
+        private readonly Pen _normalLine = new(new SolidColorBrush(Color.FromArgb(255, 30, 30, 30)), 1);
+        private readonly Pen _microLine = new(new SolidColorBrush(Color.FromArgb(255, 20, 20, 20)), 1);
+        private readonly Pen _centerLine = new(new SolidColorBrush(Color.FromArgb(255, 103, 43, 45)), 1);
+        private readonly Pen _centerList = new(new SolidColorBrush(Color.FromArgb(255, 42, 104, 45)), 1);
         // 当前画笔
         private Pen? _currentPen;
 

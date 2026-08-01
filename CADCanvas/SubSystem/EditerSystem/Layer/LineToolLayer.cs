@@ -52,8 +52,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         {
             _linePen.Freeze();
             _linearPen.Brush = new SolidColorBrush(Color.FromArgb(128, 255, 255, 255));
-            _linearPen.DashStyle = new DashStyle([2, 2], 0);
-            _linearPen.DashCap = PenLineCap.Flat;
+            _linearPen.DashStyle = new DashStyle([1, 3], 0);
+            _linearPen.StartLineCap = PenLineCap.Square;
+            _linearPen.EndLineCap = PenLineCap.Square;
             _linearPen.Freeze();
             IsHitTestVisible = false;
 

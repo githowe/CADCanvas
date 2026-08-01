@@ -215,6 +215,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                             _lineInfoPopup = null;
                             // 清空极轴追踪图层
                             _polarLayer.Clear();
+                            _polarLayer.Reset();
                             // 重新加载坐标控件
                             Point point = _host.GetMousePoint().OffsetTo(20, 20);
                             _pointPopup = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);

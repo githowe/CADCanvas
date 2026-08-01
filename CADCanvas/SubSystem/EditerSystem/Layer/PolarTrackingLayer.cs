@@ -22,8 +22,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
 
         public override void Init()
         {
-            _pen.DashStyle = new DashStyle([4, 2], 0);
-            _pen.DashCap = PenLineCap.Flat;
+            _pen.DashStyle = new DashStyle([3, 3], 0);
+            _pen.StartLineCap = PenLineCap.Square;
+            _pen.EndLineCap = PenLineCap.Square;
             _pen.Freeze();
         }
 

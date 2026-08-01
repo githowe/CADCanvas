@@ -22,6 +22,8 @@ namespace CADCanvas.SubSystem.DrawingSystem
         public override void Init()
         {
             _pen = new Pen(new SolidColorBrush(LineColor), LineWidth);
+            _pen.StartLineCap = PenLineCap.Square;
+            _pen.EndLineCap = PenLineCap.Square;
             _pen.Freeze();
         }
 
