@@ -1,5 +1,4 @@
 ﻿using CADCanvas.SubSystem.DrawingSystem;
-using CADCanvas.SubSystem.EditerSystem.Layer;
 using CADCanvas.SubSystem.EditerSystem.Tool;
 using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
@@ -158,8 +157,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public void LineTool_SetNext()
         {
             // 获取起点与终点
-            Point start = _layerComponent.GetLineToolStart();
-            Point end = _layerComponent.GetLineToolEnd();
+            Point start = _layerComponent.GetLineToolWorldStart();
+            Point end = _layerComponent.GetLineToolWorldEnd();
             // 创建直线
             VisualLine line = GeoCreator.Instance.CreateLine(start.X, start.Y, end.X, end.Y);
             // 添加直线

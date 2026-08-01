@@ -12,5 +12,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
     /// </summary>
     public class CatchMarkLayer : DrawingLayer
     {
+        public GridLayer? Grid { get; set; } = null;
     }
 }

@@ -173,7 +173,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
 
         #region 字段
 
-        private readonly string _format = "0.#####";
+        private readonly string _format = "0.####";
 
         /// <summary>当前焦点</summary>
         private FocusInput _focus = FocusInput.None;

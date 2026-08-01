@@ -42,6 +42,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _gridLayer.Update();
         }
 
+        /// <summary>
+        /// 更新全部图层。调整窗口后调用
+        /// </summary>
         public void UpdateAll()
         {
             foreach (var item in _layerList)
@@ -53,7 +56,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         }
 
         /// <summary>
-        /// 更新图层位置
+        /// 更新图层位置。拖动或缩放网格后调用
         /// </summary>
         public void UpdateLayerPosition()
         {
@@ -99,14 +102,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         #region 直线工具图层
 
         /// <summary>
-        /// 获取直线工具起点
+        /// 获取直线工具世界起点
         /// </summary>
-        public Point GetLineToolStart() => _lineToolLayer.WorldStart.Value;
+        public Point GetLineToolWorldStart() => _lineToolLayer.WorldStart.Value;
 
         /// <summary>
-        /// 获取直线工具终点
+        /// 获取直线工具世界终点
         /// </summary>
-        public Point GetLineToolEnd() => _lineToolLayer.WorldEnd.Value;
+        public Point GetLineToolWorldEnd() => _lineToolLayer.WorldEnd.Value;
 
         /// <summary>
         /// 设置直线工具起点
@@ -149,15 +152,24 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _lineToolLayer.Init();
             _layerList.Add(_lineToolLayer);
 
-            _polarTrackingLayer = new PolarTrackingLayer();
+            _polarTrackingLayer = new PolarTrackingLayer { Grid = _gridLayer };
             _host.Layer_Mark.Children.Add(_polarTrackingLayer);
             _polarTrackingLayer.Init();
             _layerList.Add(_polarTrackingLayer);
 
-            _catchMarkLayer = new CatchMarkLayer();
+            _catchMarkLayer = new CatchMarkLayer { Grid = _gridLayer };
             _host.Layer_Mark.Children.Add(_catchMarkLayer);
             _catchMarkLayer.Init();
             _layerList.Add(_catchMarkLayer);
+        }
+
+        protected override void Enable()
+        {
+            foreach (var item in _layerList)
+            {
+                item.Width = _host.LayerBox.ActualWidth;
+                item.Height = _host.LayerBox.ActualHeight;
+            }
         }
 
         #endregion

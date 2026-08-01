@@ -61,15 +61,17 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             double resizeRatio = CalculateResizeRatio(resizeIncrement);
 
             // 计算缩放中心与网格中心的偏移距离
-            Point offset = new(Center.X - resizeCenter.X, Center.Y - resizeCenter.Y);
+            Point offset = new Point(Center.X - resizeCenter.X, Center.Y - resizeCenter.Y);
             // 根据缩放比计算新偏移距离
-            Point newOffset = new(offset.X * resizeRatio, offset.Y * resizeRatio);
+            Point newOffset = new Point(offset.X * resizeRatio, offset.Y * resizeRatio);
             // 更新中心偏移距离
-            _centerOffset = new()
+            _centerOffset = new Point
             {
                 X = _centerOffset.X + (newOffset.X - offset.X),
                 Y = _centerOffset.Y + (newOffset.Y - offset.Y),
             };
+            _centerOffset.X = (int)_centerOffset.X;
+            _centerOffset.Y = (int)_centerOffset.Y;
 
             ResizeLevel += resizeIncrement;
             Update();
@@ -81,6 +83,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// <param name="offset">偏移</param>
         public void MoveLayer(Point offset)
         {
+            offset.X = (int)offset.X;
+            offset.Y = (int)offset.Y;
             _moveOffset = offset;
             Update();
         }
@@ -91,7 +95,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         public void ApplyOffset()
         {
             _centerOffset = new Point(_centerOffset.X + _moveOffset.X, _centerOffset.Y + _moveOffset.Y);
-            _moveOffset = new();
+            _moveOffset = new Point();
         }
 
         /// <summary>
@@ -137,8 +141,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             _gridPixelSize = CalculateGridSize(ResizeLevel);
 
             // 更新中心点
-            Point realOffset = new(_centerOffset.X + _moveOffset.X, _centerOffset.Y + _moveOffset.Y);
-            Center = new Point((int)Width / 2 + realOffset.X, (int)Height / 2 + realOffset.Y);
+            Point realOffset = new Point(_centerOffset.X + _moveOffset.X, _centerOffset.Y + _moveOffset.Y);
+            Center = new Point(Width / 2 + realOffset.X, Height / 2 + realOffset.Y);
 
             // 更新起始点
             UpdateDrawStart();
@@ -242,9 +246,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// 绘制水平线
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void DrawHorizontalLine(int y)
+        private void DrawHorizontalLine(double y)
         {
-            int realy = (int)_drawStart.Y + y;
+            double realy = _drawStart.Y + y;
             if (realy < 0 || realy > Height || _dc == null) return;
             _dc.DrawLine(_currentPen, new Point(0, realy), new Point(Width, realy));
         }
@@ -253,9 +257,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// 绘制垂直线
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void DrawVerticalLine(int x)
+        private void DrawVerticalLine(double x)
         {
-            int realx = (int)_drawStart.X + x;
+            double realx = _drawStart.X + x;
             if (realx < 0 || realx > Width || _dc == null) return;
             _dc.DrawLine(_currentPen, new Point(realx, 0), new Point(realx, Height));
         }

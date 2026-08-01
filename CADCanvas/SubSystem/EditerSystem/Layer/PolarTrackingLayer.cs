@@ -1,7 +1,9 @@
 ﻿using CADCanvas.SubSystem.DebugSystem;
 using System.Windows;
 using System.Windows.Media;
+using XLogic.Wpf;
 using XLogic.Wpf.Drawing;
+using XLogic.Wpf.Ex;
 
 namespace CADCanvas.SubSystem.EditerSystem.Layer
 {
@@ -10,13 +12,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
     /// </summary>
     public class PolarTrackingLayer : DrawingLayer
     {
-        public double TrackingAngle
-        {
-            get => _trackingAngle;
-            set => _trackingAngle = value;
-        }
+        #region 属性
 
-        public bool Snaped => _snaped;
+        public GridLayer? Grid { get; set; } = null;
+
+        #endregion
+
+        #region 公开方法
 
         public override void Init()
         {
@@ -25,45 +27,46 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             _pen.Freeze();
         }
 
+        public void Reset()
+        {
+            _worldStart = new Point();
+            _angle = 0;
+            _snaped = false;
+        }
+
         /// <summary>
         /// 更新追踪角度
         /// </summary>
-        public double UpdateTrackingAngle(Point screenStart, Point screenEnd)
+        public double UpdateTrackingAngle(Point worldStart, Point worldEnd)
         {
-            _screenStart = screenStart;
-
-            // 将屏幕坐标转换为数学坐标
-            Point mathStart = new Point(screenStart.X, -screenStart.Y);
-            Point mathEnd = new Point(screenEnd.X, -screenEnd.Y);
-            // 计算偏移
-            Point offset = new Point(mathEnd.X - mathStart.X, mathEnd.Y - mathStart.Y);
+            // 记录起点
+            _worldStart = worldStart;
             // 计算角度
-            double radians;
-            double angle;
-            if (mathEnd.Y >= mathStart.Y)
-            {
-                radians = Math.Atan2(offset.Y, offset.X);
-                angle = radians * 180 / Math.PI;
-            }
-            else
-            {
-                radians = Math.Atan2(offset.Y, offset.X) + 2 * Math.PI;
-                angle = radians * 180 / Math.PI;
-            }
-
+            double angle = PointTool.GetAngle(worldStart.ToMathPoint(), worldEnd.ToMathPoint());
+            // 吸附并记录角度
             _angle = SnapAngle(angle);
             DebugInfoManager.Instance.UpdateInfo("极轴追踪", $"{angle:F2} > {_angle:F2}");
+            // 返回吸附后的角度
             return _angle;
         }
+
+        #endregion
+
+        #region 内部方法
 
         protected override void OnUpdate()
         {
             if (_snaped)
             {
-                Point point = GetPointIntersectionScreen(_screenStart, _angle);
-                _dc.DrawLine(_pen, _screenStart, point);
+                Point screenStart = Grid.ToScreen(_worldStart);
+                Point point = GetPointIntersectionScreen(screenStart, _angle);
+                _dc.DrawLine(_pen, screenStart, point);
             }
         }
+
+        #endregion
+
+        #region 私有方法
 
         private double SnapAngle(double angle)
         {
@@ -76,7 +79,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             _snaped = false;
             return angle;
         }
-        
+
         /// <summary>
         /// 获取射线与屏幕的交点
         /// </summary>
@@ -134,9 +137,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             return candidates[0].point;
         }
 
-        private readonly Pen _pen = new Pen(new SolidColorBrush(Color.FromRgb(254, 210, 103)), 1);
+        #endregion
 
-        private Point _screenStart = new Point();
+        #region 字段
+
+        private readonly Pen _pen = new Pen(new SolidColorBrush(Color.FromRgb(0, 160, 0)), 1);
+
+        private Point _worldStart = new Point();
         private double _angle = 0;
 
         /// <summary>追踪角度</summary>
@@ -145,5 +152,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         private readonly double _snapThreshold = 2;
 
         private bool _snaped = false;
+
+        #endregion
     }
 }

@@ -37,7 +37,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                 {
                     if (_pointPopup == null)
                     {
-                        Point point = _host.GetMousePoint().OffsetPoint(20, 20);
+                        Point point = _host.GetMousePoint().OffsetTo(20, 20);
                         _pointPopup = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
                         _pointPopup?.UpdatePoint(_host.GetWorldPoint());
                         if (_pointPopup != null)
@@ -57,7 +57,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                         // 选择起点
                         _host.LineTool_SelectStart();
                         // 使控件保持在光标右下角
-                        _host.MoveControl(_host.GetMousePoint().OffsetPoint(20, 20));
+                        _host.MoveControl(_host.GetMousePoint().OffsetTo(20, 20));
                         // 更新坐标值
                         _pointPopup?.UpdatePoint(_host.GetWorldPoint());
                         // 全选
@@ -103,7 +103,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             NewTree("设置下一点", (_) =>
             {
                 _host.CaptureOperationLayer();
+                // 直接应用当前输入框中的长度与角度
+                _layer.当前物理长度 = _lineInfoPopup.输入长度;
+                _layer.当前周角 = _lineInfoPopup.输入角度;
+                _layer.MoveWorldEnd();
                 _host.LineTool_SetNext();
+                _lineInfoPopup?.Reset();
+                _polarLayer.Clear();
+                _polarLayer.Reset();
             });
             NewNode(Behaviors.LeftUp, (_) =>
             {
@@ -209,7 +216,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                             // 清空极轴追踪图层
                             _polarLayer.Clear();
                             // 重新加载坐标控件
-                            Point point = _host.GetMousePoint().OffsetPoint(20, 20);
+                            Point point = _host.GetMousePoint().OffsetTo(20, 20);
                             _pointPopup = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
                             _pointPopup?.UpdatePoint(_host.GetWorldPoint());
                             if (_pointPopup != null)
@@ -221,7 +228,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             // 再交给行为树处理按键
             base.OnKeyDown(e);
             // 禁止系统处理Tab、Esc键
-            if (e.Key is Key.Tab or Key.Escape) e.Handled = true;
+            if (e.Key is Key.Tab or Key.Escape or Key.Enter) e.Handled = true;
         }
 
         private void HandleTreeRootKeyDown(KeyEventArgs e)
@@ -269,10 +276,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         /// </summary>
         private void SelectNext()
         {
-            // 设置世界终点并更新直线长度
-            _layer.WorldEnd = _host.GetWorldPoint();
-            _layer.UpdateLineLength();
-
             // 直线信息控件为空，则加载直线信息控件
             if (_lineInfoPopup == null)
             {
@@ -282,15 +285,35 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                 _lineInfoPopup.Loaded += (s, e) => _lineInfoPopup.InitFocus();
             }
 
-            // 更新极轴追踪图层
-            double angle = _polarLayer.UpdateTrackingAngle(_layer.ScreenStart, _layer.ScreenEnd);
-            _polarLayer.Update();
-            // 对齐追踪角度
-            if (_polarLayer.Snaped) _layer.SnapTo(angle);
+            // 设置世界终点，并更新直线长度与角度
+            _layer.WorldEnd = _host.GetWorldPoint();
+            _layer.UpdateLineInfo();
+            // 设置直线信息控件的原长度与原角度
+            _lineInfoPopup.原长度 = _layer.物理长度;
+            _lineInfoPopup.原角度 = _layer.周角;
+
+            // 获取已锁定的长度
+            _layer.当前物理长度 = _lineInfoPopup.锁定长度;
+            // 如果角度已锁定，则使用已锁定的角度
+            if (_lineInfoPopup.AngleLocked) _layer.当前周角 = _lineInfoPopup.锁定角度;
+            // 否则，使用极轴追踪的角度
+            else
+            {
+                double angle = _polarLayer.UpdateTrackingAngle(_layer.WorldStart.Value, _layer.WorldEnd.Value);
+                _polarLayer.Update();
+                _layer.当前周角 = angle;
+                _lineInfoPopup.原角度 = angle;
+            }
+
+            // 根据长度与角度确定世界终点
+            if (_layer.当前物理长度 != _layer.物理长度 ||
+                _layer.当前周角 != _layer.周角)
+                _layer.MoveWorldEnd();
+
             // 更新直线
             _layer.Update();
             // 更新直线信息控件
-            _lineInfoPopup.UpdateLineInfo(_layer.LineLength, _layer.LineCenter, _layer.LineAngle, _layer.ArcCenter);
+            _lineInfoPopup.UpdateLineInfo(_layer.LineCenter, _layer.ArcCenter);
         }
 
         /// <summary>
