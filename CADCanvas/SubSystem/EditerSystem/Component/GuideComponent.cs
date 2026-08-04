@@ -1,9 +1,4 @@
 ﻿using CADCanvas.SubSystem.EditerSystem.Layer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using XLogic.Base.UI;
 
 namespace CADCanvas.SubSystem.EditerSystem.Component
@@ -15,7 +10,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     {
         protected override void Init()
         {
-            
+
         }
 
         private PolarTrackingLayer _layer;

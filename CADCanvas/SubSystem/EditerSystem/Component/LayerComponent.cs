@@ -20,6 +20,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public LineToolLayer LineToolLayer => _lineToolLayer;
 
+        public RTreeViewLayer RTreeViewLayer => _rTreeViewLayer;
+
         public PolarTrackingLayer PolarTrackingLayer => _polarTrackingLayer;
 
         public CatchMarkLayer CatchMarkLayer => _catchMarkLayer;
@@ -34,6 +36,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// 获取当前鼠标的世界坐标
         /// </summary>
         public Point GetWorldPoint() => _gridLayer.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
+
+        public Point GetWorldPoint(Point screenPoint) => _gridLayer.ToWorld(screenPoint);
 
         public void UpdateGrid()
         {
@@ -152,6 +156,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _lineToolLayer.Init();
             _layerList.Add(_lineToolLayer);
 
+            _rTreeViewLayer = new RTreeViewLayer { Grid = _gridLayer };
+            _host.Layer_RTree.Children.Add(_rTreeViewLayer);
+            _rTreeViewLayer.Init();
+            _layerList.Add(_rTreeViewLayer);
+
             _polarTrackingLayer = new PolarTrackingLayer { Grid = _gridLayer };
             _host.Layer_Mark.Children.Add(_polarTrackingLayer);
             _polarTrackingLayer.Init();
@@ -189,6 +198,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         /// <summary>直线工具</summary>
         private LineToolLayer? _lineToolLayer;
+
+        #endregion
+
+        #region 可视化图层
+
+        private RTreeViewLayer? _rTreeViewLayer;
 
         #endregion
 

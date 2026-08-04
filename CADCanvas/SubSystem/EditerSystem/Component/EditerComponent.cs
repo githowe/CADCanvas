@@ -1,5 +1,4 @@
-﻿using CADCanvas.SubSystem.ResourceSystem;
-using XLogic.Base.UI;
+﻿using XLogic.Base.UI;
 
 namespace CADCanvas.SubSystem.EditerSystem.Component
 {

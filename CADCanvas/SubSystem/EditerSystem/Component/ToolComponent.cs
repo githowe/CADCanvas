@@ -136,7 +136,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void UpdateHoverObject()
         {
-
+            // 获取鼠标坐标
+            Point mousePoint = GetMousePoint();
+            // 以鼠标为中心点，创建一个小矩形区域
+            Rect rect = new Rect(mousePoint.X - 16, mousePoint.Y - 16, 32, 32);
+            // 转换为世界坐标
+            Point leftTop = _layerComponent.GetWorldPoint(rect.TopLeft);
+            Point rightBottom = _layerComponent.GetWorldPoint(rect.BottomRight);
+            Rect worldRect = new Rect(leftTop, rightBottom);
+            // 更新命中包围盒
+            GetComponent<SceneComponent>().UpdateHitedBounds(worldRect);
         }
 
         #endregion
@@ -159,6 +168,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 获取起点与终点
             Point start = _layerComponent.GetLineToolWorldStart();
             Point end = _layerComponent.GetLineToolWorldEnd();
+            // 两点相同则不创建直线
+            if (start == end) return;
+
             // 创建直线
             VisualLine line = GeoCreator.Instance.CreateLine(start.X, start.Y, end.X, end.Y);
             // 添加直线
@@ -169,6 +181,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 清除直线工具并设置起点
             _layerComponent.ClearLineTool();
             _layerComponent.SetLineToolStart(end);
+
+            GetComponent<SceneComponent>().AddVisual(line);
         }
 
         #endregion

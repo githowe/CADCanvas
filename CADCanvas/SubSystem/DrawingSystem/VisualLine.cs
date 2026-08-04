@@ -19,6 +19,18 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public double LineWidth { get; set; } = 1.0;
 
+        public override Rect Bounds
+        {
+            get
+            {
+                double x1 = Math.Min(Start.X, End.X);
+                double y1 = Math.Min(Start.Y, End.Y);
+                double x2 = Math.Max(Start.X, End.X);
+                double y2 = Math.Max(Start.Y, End.Y);
+                return new Rect(new Point(x1, y1), new Point(x2, y2));
+            }
+        }
+
         public override void Init()
         {
             _pen = new Pen(new SolidColorBrush(LineColor), LineWidth);

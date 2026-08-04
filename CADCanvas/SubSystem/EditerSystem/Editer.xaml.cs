@@ -70,6 +70,7 @@ namespace CADCanvas.SubSystem.EditerSystem
             _interactionComponent = _componentBox.AddComponent<InteractionComponent>(this, "交互组件");
             _drawingComponent = _componentBox.AddComponent<DrawingComponent>(this, "绘制组件");
             _controlComponent = _componentBox.AddComponent<ControlComponent>(this, "控件组件");
+            _sceneComponent = _componentBox.AddComponent<SceneComponent>(this, "场景组件");
             _componentBox.Init();
         }
 
@@ -106,6 +107,7 @@ namespace CADCanvas.SubSystem.EditerSystem
         private InteractionComponent _interactionComponent;
         private DrawingComponent _drawingComponent;
         private ControlComponent _controlComponent;
+        private SceneComponent _sceneComponent;
 
         #endregion
 

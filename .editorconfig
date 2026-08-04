@@ -5,3 +5,12 @@ dotnet_diagnostic.IDE0090.severity = none
 
 # IDE0028: 简化集合初始化
 dotnet_diagnostic.IDE0028.severity = none
+
+# IDE0290: 使用主构造函数
+dotnet_diagnostic.IDE0290.severity = none
+
+# IDE0306: 简化集合初始化
+dotnet_diagnostic.IDE0306.severity = none
+
+# CA1822: 将成员标记为 static
+dotnet_diagnostic.CA1822.severity = none
