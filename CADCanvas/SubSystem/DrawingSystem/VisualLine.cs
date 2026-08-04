@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
+using System.Windows;
 using System.Windows.Media;
 
 namespace CADCanvas.SubSystem.DrawingSystem
@@ -42,6 +43,18 @@ namespace CADCanvas.SubSystem.DrawingSystem
         public override void Draw(DrawingContext dc, IWorldGrid grid)
         {
             dc.DrawLine(_pen, grid.ToScreen(Start), grid.ToScreen(End));
+        }
+
+        public override List<SnapPoint> GetSnapPointList()
+        {
+            List<SnapPoint> result = new List<SnapPoint>();
+
+            // 添加起点、中点、终点
+            result.Add(new SnapPoint { Type = SnapType.Endpoint, WorldPoint = Start });
+            result.Add(new SnapPoint { Type = SnapType.Midpoint, WorldPoint = new Point((Start.X + End.X) / 2, (Start.Y + End.Y) / 2) });
+            result.Add(new SnapPoint { Type = SnapType.Endpoint, WorldPoint = End });
+
+            return result;
         }
 
         private Pen? _pen = null;

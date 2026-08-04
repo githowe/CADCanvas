@@ -40,10 +40,11 @@
                 <Grid x:Name="DocBox" ClipToBounds="True">
                     <Grid x:Name="PaperBox" ClipToBounds="True"/>
                     <Grid x:Name="LayerBox"/>
-                    <Grid x:Name="Layer_Mouse" Background="Transparent"/>
+                    <Grid x:Name="Layer_Mouse" Background="Transparent" Cursor="None"/>
                     <Grid x:Name="Layer_RTree" IsHitTestVisible="False"/>
                     <Grid x:Name="Layer_Mark" IsHitTestVisible="False"/>
                     <Grid x:Name="Layer_Control" IsHitTestVisible="False"/>
+                    <Grid x:Name="Layer_Cursor" IsHitTestVisible="False"/>
                 </Grid>
             </Grid>
             <!-- 属性面板 -->

@@ -113,19 +113,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// <summary>
         /// 世界坐标转屏幕坐标
         /// </summary>
-        public Point ToScreen(Point worldPoint) => ToScreen(worldPoint.X, worldPoint.Y);
-
-        /// <summary>
-        /// 世界坐标转屏幕坐标
-        /// </summary>
-        public Point ToScreen(double x, double y)
-        {
-            Point screenPoint = new Point();
-            double pixelPhysicsLength = (double)_gridPhysicsSize / _gridPixelSize;
-            screenPoint.X = x / pixelPhysicsLength + Center.X + 0.5;
-            screenPoint.Y = y / pixelPhysicsLength + Center.Y + 0.5;
-            return screenPoint;
-        }
+        public Point ToScreen(Point worldPoint, bool round = false) => ToScreen(worldPoint.X, worldPoint.Y, round);
 
         #endregion
 
@@ -183,6 +171,26 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         #endregion
 
         #region 私有方法
+
+        /// <summary>
+        /// 世界坐标转屏幕坐标
+        /// </summary>
+        private Point ToScreen(double x, double y, bool round)
+        {
+            Point screenPoint = new Point();
+            double pixelPhysicsLength = (double)_gridPhysicsSize / _gridPixelSize;
+            if (round)
+            {
+                screenPoint.X = Math.Round(x / pixelPhysicsLength + Center.X) + 0.5;
+                screenPoint.Y = Math.Round(y / pixelPhysicsLength + Center.Y) + 0.5;
+            }
+            else
+            {
+                screenPoint.X = x / pixelPhysicsLength + Center.X + 0.5;
+                screenPoint.Y = y / pixelPhysicsLength + Center.Y + 0.5;
+            }
+            return screenPoint;
+        }
 
         /// <summary>
         /// 计算缩放比

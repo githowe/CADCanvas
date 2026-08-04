@@ -7,7 +7,7 @@ namespace CADCanvas.SubSystem.DrawingSystem
         /// <summary>
         /// 世界坐标转屏幕坐标
         /// </summary>
-        Point ToScreen(Point world);
+        Point ToScreen(Point world, bool round = false);
 
         /// <summary>
         /// 屏幕坐标转世界坐标

@@ -27,12 +27,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         public override void Init()
         {
-            Cursor = CursorManager.Instance.Draw;
+            CursorImage = ImageManager.Instance.Cursor_Draw;
 
             // 鼠标进入
             NewTree(Behaviors.Enter, (_) =>
             {
                 ResetTree();
+                _cursorLayer.ShowCursor();
+                _cursorLayer.MoveCursor(_host.GetMousePoint());
                 if (_stage == DrawLineStage.SelectStart)
                 {
                     if (_pointPopup == null)
@@ -47,10 +49,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             });
             Finish();
 
+            // 鼠标离开
+            NewTree(Behaviors.Leave, (_) =>
+            {
+                ResetTree();
+                _cursorLayer.HideCursor();
+            });
+            Finish();
+
             // 移动
             NewTree(Behaviors.Move, (_) =>
             {
                 ResetTree();
+                _cursorLayer.MoveCursor(_host.GetMousePoint());
                 switch (_stage)
                 {
                     case DrawLineStage.SelectStart:
@@ -59,7 +70,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                         // 使控件保持在光标右下角
                         _host.MoveControl(_host.GetMousePoint().OffsetTo(20, 20));
                         // 更新坐标值
-                        _pointPopup?.UpdatePoint(_host.GetWorldPoint());
+                        Point snapedWorldPoint = _host.GetSnapWorldPoint();
+                        _pointPopup?.UpdatePoint(snapedWorldPoint);
+                        // 将光标移动至捕捉点处
+                        Point screenPoint = _grid.ToScreen(snapedWorldPoint, true);
+                        _cursorLayer.MoveCursor(screenPoint.OffsetTo(-0.5, -0.5));
                         // 全选
                         _pointPopup?.SelectAll();
                         break;
@@ -162,8 +177,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         public override void Enable()
         {
-            _layer = _host.GetComponent<LayerComponent>().LineToolLayer;
-            _polarLayer = _host.GetComponent<LayerComponent>().PolarTrackingLayer;
+            LayerComponent layerComponent = _host.GetComponent<LayerComponent>();
+            _grid = layerComponent.GridLayer;
+            _layer = layerComponent.LineToolLayer;
+            _polarLayer = layerComponent.PolarTrackingLayer;
+            _cursorLayer = layerComponent.CursorLayer;
         }
 
         public override void Active()
@@ -286,8 +304,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                 _lineInfoPopup.Loaded += (s, e) => _lineInfoPopup.InitFocus();
             }
 
-            // 设置世界终点，并更新直线长度与角度
-            _layer.WorldEnd = _host.GetWorldPoint();
+            // 设置世界终点
+            _layer.WorldEnd = _host.GetSnapWorldPoint();
+            // 将光标移动至捕捉点处
+            Point screenPoint = _grid.ToScreen(_layer.WorldEnd.Value, true);
+            _cursorLayer.MoveCursor(screenPoint.OffsetTo(-0.5, -0.5));
+            // 更新直线信息
             _layer.UpdateLineInfo();
             // 设置直线信息控件的原长度与原角度
             _lineInfoPopup.原长度 = _layer.物理长度;
@@ -333,8 +355,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         private DrawLineStage _stage = DrawLineStage.SelectStart;
 
+        private GridLayer? _grid = null;
         private LineToolLayer? _layer = null;
         private PolarTrackingLayer? _polarLayer = null;
+        private CursorLayer _cursorLayer;
         private PointPopup? _pointPopup = null;
         private LineInfoPopup? _lineInfoPopup = null;
 

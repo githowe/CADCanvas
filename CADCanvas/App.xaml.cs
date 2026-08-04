@@ -20,6 +20,7 @@ namespace CADCanvas
         {
             SystemDataDelegate.Instance.Init();
             CursorManager.Instance.Init();
+            ImageManager.Instance.Init();
             TimerEngine.Instance.Start();
         }
     }

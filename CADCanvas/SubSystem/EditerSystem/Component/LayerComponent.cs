@@ -24,13 +24,17 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public PolarTrackingLayer PolarTrackingLayer => _polarTrackingLayer;
 
-        public CatchMarkLayer CatchMarkLayer => _catchMarkLayer;
+        public SnapMarkLayer SnapMarkLayer => _snapMarkLayer;
+
+        public CursorLayer CursorLayer => _cursorLayer;
 
         #endregion
 
         #region 公开方法
 
         public Point GetScreenPoint() => Mouse.GetPosition(_host.Layer_Mouse);
+
+        public Point GetScreenPoint(Point worldPoint) => _gridLayer.ToScreen(worldPoint);
 
         /// <summary>
         /// 获取当前鼠标的世界坐标
@@ -166,10 +170,15 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _polarTrackingLayer.Init();
             _layerList.Add(_polarTrackingLayer);
 
-            _catchMarkLayer = new CatchMarkLayer { Grid = _gridLayer };
-            _host.Layer_Mark.Children.Add(_catchMarkLayer);
-            _catchMarkLayer.Init();
-            _layerList.Add(_catchMarkLayer);
+            _snapMarkLayer = new SnapMarkLayer { Grid = _gridLayer };
+            _host.Layer_Mark.Children.Add(_snapMarkLayer);
+            _snapMarkLayer.Init();
+            _layerList.Add(_snapMarkLayer);
+
+            _cursorLayer = new CursorLayer();
+            _host.Layer_Cursor.Children.Add(_cursorLayer);
+            _cursorLayer.Init();
+            _layerList.Add(_cursorLayer);
         }
 
         protected override void Enable()
@@ -212,9 +221,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>极轴追踪</summary>
         private PolarTrackingLayer? _polarTrackingLayer;
         /// <summary>捕捉标记</summary>
-        private CatchMarkLayer? _catchMarkLayer;
+        private SnapMarkLayer? _snapMarkLayer;
 
         #endregion
+
+        private CursorLayer? _cursorLayer;
 
         /// <summary>图层列表</summary>
         private readonly List<DrawingLayer> _layerList = new List<DrawingLayer>();

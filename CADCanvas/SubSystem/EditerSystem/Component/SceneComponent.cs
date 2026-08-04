@@ -1,5 +1,6 @@
 ﻿using CADCanvas.SubSystem.DrawingSystem;
 using CADCanvas.SubSystem.EditerSystem.Component.Tool.RTree;
+using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
 using CADCanvas.SubSystem.EditerSystem.Layer;
 using System.Windows;
 using XLogic.Base.UI;
@@ -11,6 +12,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     /// </summary>
     public class SceneComponent : Component<Editer>
     {
+        public List<GeoVisual> AllVisual => _visualList;
+
+        public List<GeoVisual> HoveredVisual => _hoveredList;
+
+        public List<SnapPoint> SnapPointList { get; set; } = new List<SnapPoint>();
+
         public void AddVisual(GeoVisual visual)
         {
             _visualList.Add(visual);
@@ -38,24 +45,41 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public void UpdateBoundsLayerView()
         {
-            _layer.LayerList = _tree.LayerList;
-            _layer.Update();
+            _rtViewLayer.LayerList = _tree.LayerList;
+            _rtViewLayer.Update();
         }
 
         public void UpdateHitedBounds(Rect rect)
         {
             IReadOnlyList<IBox> boundsList = _tree.Find(rect);
-            _layer.HoveredList.Clear();
+            _hoveredList.Clear();
+            _rtViewLayer.HoveredList.Clear();
             foreach (var item in boundsList)
-                _layer.HoveredList.Add(item.Bounds);
-            _layer.Update();
+            {
+                _hoveredList.Add((GeoVisual)item);
+                _rtViewLayer.HoveredList.Add(item.Bounds);
+            }
+            _rtViewLayer.Update();
+        }
+
+        public void UpdateSnapPoint(Point mousePoint)
+        {
+            Rect rect = new Rect(mousePoint.X - 16, mousePoint.Y - 16, 32, 32);
+            Point leftTop = GetComponent<LayerComponent>().GetWorldPoint(rect.TopLeft);
+            Point rightBottom = GetComponent<LayerComponent>().GetWorldPoint(rect.BottomRight);
+            Rect worldRect = new Rect(leftTop, rightBottom);
+
+            SnapPointList = SnapPicker.PickSnapPoint(_hoveredList, worldRect);
+            _snapMarkLayer.SnapPointList = SnapPointList;
+            _snapMarkLayer.Update();
         }
 
         #region 生命周期
 
         protected override void Enable()
         {
-            _layer = GetComponent<LayerComponent>().RTreeViewLayer;
+            _rtViewLayer = GetComponent<LayerComponent>().RTreeViewLayer;
+            _snapMarkLayer = GetComponent<LayerComponent>().SnapMarkLayer;
         }
 
         #endregion
@@ -69,8 +93,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>可视对象列表</summary>
         private readonly List<GeoVisual> _visualList = new List<GeoVisual>();
 
+        private readonly List<GeoVisual> _hoveredList = new List<GeoVisual>();
+
         private readonly RTree _tree = new RTree();
 
-        private RTreeViewLayer _layer;
+        private RTreeViewLayer _rtViewLayer;
+        private SnapMarkLayer _snapMarkLayer;
     }
 }

@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <None Remove="Assets\Cursor\Move.cur" />
+    <None Remove="Assets\Image\Cursor\Draw.png" />
+    <None Remove="Assets\Image\Cursor\Move.png" />
+    <None Remove="Assets\Image\Cursor\Select.png" />
     <None Remove="SubSystem\EditerSystem\Image\Circle.png" />
     <None Remove="SubSystem\EditerSystem\Image\Line.png" />
     <None Remove="SubSystem\EditerSystem\Control\Image\Lock.png" />
@@ -38,6 +41,9 @@
     <Resource Include="Assets\Cursor\Move.cur" />
     <Resource Include="Assets\Cursor\Select.cur" />
     <Resource Include="Assets\Cursor\Draw.cur" />
+    <Resource Include="Assets\Image\Cursor\Draw.png" />
+    <Resource Include="Assets\Image\Cursor\Move.png" />
+    <Resource Include="Assets\Image\Cursor\Select.png" />
     <Resource Include="SubSystem\EditerSystem\Image\Circle.png" />
     <Resource Include="SubSystem\EditerSystem\Image\Line.png" />
     <Resource Include="SubSystem\EditerSystem\Control\Image\Lock.png" />

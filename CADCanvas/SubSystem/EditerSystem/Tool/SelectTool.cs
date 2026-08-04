@@ -1,4 +1,5 @@
 ﻿using CADCanvas.SubSystem.EditerSystem.Component;
+using CADCanvas.SubSystem.EditerSystem.Layer;
 using CADCanvas.SubSystem.ResourceSystem;
 using XLogic.Wpf.Behavior;
 using XLogic.Wpf.Tool;
@@ -11,12 +12,31 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         public override void Init()
         {
-            Cursor = CursorManager.Instance.Select;
+            CursorImage = ImageManager.Instance.Cursor_Select;
+
+            // 鼠标进入
+            NewTree(Behaviors.Enter, (_) =>
+            {
+                ResetTree();
+                _layer.ShowCursor();
+                _layer.MoveCursor(_host.GetMousePoint());
+                _host.UpdateHoverObject();
+            });
+            Finish();
+
+            // 鼠标离开
+            NewTree(Behaviors.Leave, (_) =>
+            {
+                ResetTree();
+                _layer.HideCursor();
+            });
+            Finish();
 
             // 移动
             NewTree(Behaviors.Move, (_) =>
             {
                 ResetTree();
+                _layer.MoveCursor(_host.GetMousePoint());
                 _host.UpdateHoverObject();
             });
             Finish();
@@ -57,5 +77,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             });
             Finish();
         }
+
+        public override void Enable()
+        {
+            _layer = _host.GetComponent<LayerComponent>().CursorLayer;
+        }
+
+        private CursorLayer _layer;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CADCanvas.SubSystem.EditerSystem.Component.Tool.RTree;
+using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
 using System.Windows;
 using System.Windows.Media;
 
@@ -14,5 +15,7 @@ namespace CADCanvas.SubSystem.DrawingSystem
         public virtual void Init() { }
 
         public abstract void Draw(DrawingContext dc, IWorldGrid grid);
+
+        public abstract List<SnapPoint> GetSnapPointList();
     }
 }
