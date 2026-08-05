@@ -1,4 +1,5 @@
-﻿using CADCanvas.SubSystem.DrawingSystem;
+﻿using CADCanvas.SubSystem.DebugSystem;
+using CADCanvas.SubSystem.DrawingSystem;
 using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
 using CADCanvas.SubSystem.EditerSystem.Tool;
 using CADCanvas.SubSystem.ResourceSystem;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using XLogic.Base.UI;
+using XLogic.Wpf.Ex;
 
 namespace CADCanvas.SubSystem.EditerSystem.Component
 {
@@ -26,7 +28,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         {
             _currentTool?.Clear();
             _currentTool = tool;
-            _layerComponent.CursorLayer.SwitchCursor(tool.CursorImage);
+            _layerComponent!.CursorLayer.SwitchCursor(tool.CursorImage!);
             _currentTool.Active();
         }
 
@@ -62,14 +64,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public Point GetMousePoint() => Mouse.GetPosition(_host.Layer_Mouse);
 
-        public Point GetWorldPoint() => _layerComponent.GetWorldPoint();
+        public Point GetWorldPoint() => _layerComponent!.GetWorldPoint();
 
         /// <summary>
         /// 获取吸附至捕捉点的世界坐标，如果没有吸附至捕捉点，则返回当前鼠标的世界坐标
         /// </summary>
-        public Point GetSnapWorldPoint()
+        public Point GetSnapWorldPoint(out bool snapped)
         {
+            snapped = false;
             SceneComponent scene = GetComponent<SceneComponent>();
+            DebugInfoManager manager = DebugInfoManager.Instance;
 
             // 获取鼠标坐标
             Point mousePoint = GetMousePoint();
@@ -94,11 +98,21 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
                 // 捕捉点屏幕区域
                 Rect snapRect = new Rect(snapScreenPoint.X - 8, snapScreenPoint.Y - 8, 16, 16);
                 // 如果鼠标在捕捉点屏幕区域内，则返回捕捉点的世界坐标
-                if (snapRect.Contains(mousePoint)) return snapPoint.WorldPoint;
+                if (snapRect.Contains(mousePoint))
+                {
+                    snapped = true;
+                    manager.UpdateInfo("捕捉点类型", snapPoint.TypeName);
+                    manager.UpdateInfo("捕捉点坐标", snapPoint.WorldPoint.ToPointString("G17"));
+                    return snapPoint.WorldPoint;
+                }
                 // 否则，返回当前鼠标的世界坐标
+                manager.UpdateInfo("捕捉点类型", "无");
+                manager.UpdateInfo("捕捉点坐标", "");
                 return mouseWorldPoint;
             }
             // 无捕捉点，返回当前鼠标的世界坐标
+            manager.UpdateInfo("捕捉点类型", "无");
+            manager.UpdateInfo("捕捉点坐标", "");
             return mouseWorldPoint;
         }
 
@@ -109,7 +123,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void BeginDragCanvas()
         {
-            _layerComponent.CursorLayer.SwitchCursor(ImageManager.Instance.Cursor_Move);
+            _layerComponent!.CursorLayer.SwitchCursor(ImageManager.Instance.Cursor_Move);
             _mouseDown = Mouse.GetPosition(_host.Layer_Mouse);
         }
 
@@ -120,7 +134,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         {
             // 当前鼠标坐标
             Point currentPoint = Mouse.GetPosition(_host.Layer_Mouse);
-            _layerComponent.CursorLayer.MoveCursor(currentPoint);
+            _layerComponent!.CursorLayer.MoveCursor(currentPoint);
             // 计算偏移
             Point offset = new Point(currentPoint.X - _mouseDown.X, currentPoint.Y - _mouseDown.Y);
             // 获取图层组件
@@ -136,7 +150,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void EndDragCanvas()
         {
-            _layerComponent.CursorLayer.SwitchCursor(_currentTool.CursorImage);
+            _layerComponent!.CursorLayer.SwitchCursor(_currentTool.CursorImage);
             _layerComponent.ApplyMoveGrid();
         }
 
@@ -145,7 +159,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void ResizeCanvas(MouseWheelEventArgs e)
         {
-            _layerComponent.ResizeGrid(e);
+            _layerComponent!.ResizeGrid(e);
             _layerComponent.UpdateLayerPosition();
         }
 
@@ -183,7 +197,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 以鼠标为中心点，创建一个小矩形区域
             Rect rect = new Rect(mousePoint.X - 24, mousePoint.Y - 24, 48, 48);
             // 转换为世界坐标
-            Point leftTop = _layerComponent.GetWorldPoint(rect.TopLeft);
+            Point leftTop = _layerComponent!.GetWorldPoint(rect.TopLeft);
             Point rightBottom = _layerComponent.GetWorldPoint(rect.BottomRight);
             Rect worldRect = new Rect(leftTop, rightBottom);
             // 更新命中包围盒
@@ -208,10 +222,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public void LineTool_SetNext()
         {
             // 获取起点与终点
-            Point start = _layerComponent.GetLineToolWorldStart();
+            Point start = _layerComponent!.GetLineToolWorldStart();
             Point end = _layerComponent.GetLineToolWorldEnd();
             // 两点相同则不创建直线
             if (start == end) return;
+
+            DebugInfoManager.Instance.UpdateInfo("添加直线起点", start.ToPointString("G17"));
+            DebugInfoManager.Instance.UpdateInfo("添加直线终点", end.ToPointString("G17"));
 
             // 创建直线
             VisualLine line = GeoCreator.Instance.CreateLine(start.X, start.Y, end.X, end.Y);

@@ -17,18 +17,52 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         public GridLayer? Grid { get; set; } = null;
 
         /// <summary>起点世界坐标</summary>
-        public Point? WorldStart { get => _worldStart; set => _worldStart = value; }
+        public Point? WorldStart
+        {
+            get => _worldStart;
+            set
+            {
+                _worldStart = value;
+                if (_worldStart == null)
+                    DebugInfoManager.Instance.UpdateInfo("起点世界坐标", "无");
+                else
+                    DebugInfoManager.Instance.UpdateInfo("起点世界坐标", _worldStart.Value.ToPointString("G17"));
+            }
+        }
 
         /// <summary>终点世界坐标</summary>
-        public Point? WorldEnd { get => _worldEnd; set => _worldEnd = value; }
+        public Point? WorldEnd
+        {
+            get => _worldEnd;
+            set
+            {
+                _worldEnd = value;
+                if (_worldEnd == null)
+                    DebugInfoManager.Instance.UpdateInfo("终点世界坐标", "无");
+                else
+                    DebugInfoManager.Instance.UpdateInfo("终点世界坐标", _worldEnd.Value.ToPointString("G17"));
+            }
+        }
 
-        public double 物理长度 { get; set; } = 0;
+        /// <summary>
+        /// 原物理长度：根据起点与终点，计算出来的长度
+        /// </summary>
+        public double 原物理长度 { get; private set; } = 0;
 
-        public double 周角 { get; set; } = 0;
+        /// <summary>
+        /// 原周角：根据起点与终点，计算出来的角度
+        /// </summary>
+        public double 原周角 { get; private set; } = 0;
 
-        public double 当前物理长度 { get; set; } = 0;
+        /// <summary>
+        /// 当前物理长度：手动设置的物理长度
+        /// </summary>
+        public double 当前物理长度 { get => _当前物理长度; set => _当前物理长度 = value; }
 
-        public double 当前周角 { get; set; } = 0;
+        /// <summary>
+        /// 当前周角：手动设置的角度
+        /// </summary>
+        public double 当前周角 { get => _当前周角; set => _当前周角 = value; }
 
         /// <summary>直线中点</summary>
         public Point LineCenter
@@ -77,10 +111,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             if (_worldStart == null || _worldEnd == null)
                 return;
 
-            物理长度 = PointTool.GetLength(_worldStart.Value, _worldEnd.Value);
-            当前物理长度 = 物理长度;
-            周角 = PointTool.GetAngle(_worldStart.Value.ToMathPoint(), _worldEnd.Value.ToMathPoint());
-            当前周角 = 周角;
+            原物理长度 = PointTool.GetLength(_worldStart.Value, _worldEnd.Value);
+            _当前物理长度 = 原物理长度;
+            原周角 = PointTool.GetAngle(_worldStart.Value.ToMathPoint(), _worldEnd.Value.ToMathPoint());
+            _当前周角 = 原周角;
         }
 
         /// <summary>
@@ -88,13 +122,23 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// </summary>
         public void MoveWorldEnd()
         {
-            Point start = _worldStart.Value;
-            double length = 当前物理长度;
-
-            double radians = 当前周角 * Math.PI / 180;
-            double endX = start.X + length * Math.Cos(radians);
-            double endY = start.Y - length * Math.Sin(radians);
-
+            double offsetx = 0;
+            double offsety = 0;
+            // 特殊角处理，避免计算误差
+            if (_当前周角 == 0) offsetx = _当前物理长度;
+            else if (_当前周角 == 90) offsety = _当前物理长度;
+            else if (_当前周角 == 180) offsetx = -_当前物理长度;
+            else if (_当前周角 == 270) offsety = -_当前物理长度;
+            // 其他角度处理
+            else
+            {
+                double radians = _当前周角 * Math.PI / 180;
+                offsetx = _当前物理长度 * Math.Cos(radians);
+                offsety = _当前物理长度 * Math.Sin(radians);
+            }
+            // 更新终点坐标
+            double endX = _worldStart!.Value.X + offsetx;
+            double endY = _worldStart.Value.Y - offsety;
             _worldEnd = new Point(endX, endY);
         }
 
@@ -155,10 +199,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             Point mathEnd = new Point(_screenEnd.X, -_screenEnd.Y);
             double 垂直偏移 = mathEnd.Y - mathStart.Y;
             double 水平偏移 = mathEnd.X - mathStart.X;
-            _manager.UpdateInfo("垂直偏移", $"{垂直偏移:0.##}");
-            _manager.UpdateInfo("水平偏移", $"{水平偏移:0.##}");
+            _manager.UpdateInfo("垂直偏移", $"{垂直偏移:G17}");
+            _manager.UpdateInfo("水平偏移", $"{水平偏移:G17}");
             double 斜边长度 = Math.Sqrt(水平偏移 * 水平偏移 + 垂直偏移 * 垂直偏移);
-            _manager.UpdateInfo("斜边长度", $"{斜边长度:0.##}");
+            _manager.UpdateInfo("斜边长度", $"{斜边长度:G17}");
+            _manager.UpdateInfo("斜边物理长度", $"{_当前物理长度:G17}");
 
             switch (position)
             {
@@ -174,16 +219,15 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
                         double arcCenterY = _screenStart.Y - Math.Sin(中线弧度) * 斜边长度;
                         ArcCenter = new Point(arcCenterX, arcCenterY);
                         double 角度 = 斜边弧度 * 180 / Math.PI;
-                        _manager.UpdateInfo("斜边弧度", $"{斜边弧度:0.####}°");
-                        _manager.UpdateInfo("斜边角度", $"{角度:0.##}°");
+                        _manager.UpdateInfo("斜边角度", $"{角度:G17}°");
                         // 逆时针旋转90度
                         double 旋转后弧度 = 斜边弧度 + Math.PI / 2;
                         double 旋转后角度 = 旋转后弧度 * 180 / Math.PI;
-                        _manager.UpdateInfo("旋转后角度", $"{旋转后角度:0.##}°");
+                        _manager.UpdateInfo("旋转后角度", $"{旋转后角度:G17}°");
                         double 旋转后横坐标偏移 = Math.Cos(旋转后弧度) * 60;
                         double 旋转后纵坐标偏移 = Math.Sin(旋转后弧度) * 60;
-                        _manager.UpdateInfo("旋转后横坐标偏移", $"{旋转后横坐标偏移:0.##}°");
-                        _manager.UpdateInfo("旋转后纵坐标偏移", $"{旋转后纵坐标偏移:0.##}°");
+                        _manager.UpdateInfo("旋转后横坐标偏移", $"{旋转后横坐标偏移:G17}");
+                        _manager.UpdateInfo("旋转后纵坐标偏移", $"{旋转后纵坐标偏移:G17}");
                         // 添加标注线
                         LineInfo line = new LineInfo
                         {
@@ -365,6 +409,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         private Point? _worldEnd = null;
         private Point _screenStart = new Point();
         private Point _screenEnd = new Point();
+        private double _当前物理长度 = 0;
+        private double _当前周角 = 0;
 
         #endregion
     }

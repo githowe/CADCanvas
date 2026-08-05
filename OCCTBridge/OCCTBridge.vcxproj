@@ -83,6 +83,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)..\OCCTLib\Inc;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\OCCTLib\Lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)CADCanvas\bin\$(Platform)\$(Configuration)\net8.0-windows\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -131,6 +132,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <PostBuildEvent>
+      <Command>copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKernel.dll" "$(OutDir)"
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKG2d.dll" "$(OutDir)"
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKGeomBase.dll" "$(OutDir)"
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKMath.dll" "$(OutDir)"
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKService.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

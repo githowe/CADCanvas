@@ -24,5 +24,10 @@ namespace XLogic.Wpf.Ex
         /// 转换为数学坐标系的点
         /// </summary>
         public static Point ToMathPoint(this Point screenPoint) => new Point(screenPoint.X, -screenPoint.Y);
+
+        public static string ToPointString(this Point point, string format = "0.########")
+        {
+            return $"({point.X.ToString(format)}, {point.Y.ToString(format)})";
+        }
     }
 }

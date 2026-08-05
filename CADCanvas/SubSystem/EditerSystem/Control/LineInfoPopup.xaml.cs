@@ -267,8 +267,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
 
         #region 字段
 
-        private readonly string _format = "0.####";
-        private readonly string _angleFormat = "0.##";
+        private readonly string _format = "0.########";
+        private readonly string _angleFormat = "0.######";
 
         private LineInfoFocus _focus = LineInfoFocus.None;
 

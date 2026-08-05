@@ -32,8 +32,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
         {
             get
             {
-                double x = double.TryParse(Input_x.Text, out double parsedX) ? parsedX : _x;
-                double y = double.TryParse(Input_y.Text, out double parsedY) ? parsedY : _y;
+                double x = _x;
+                double y = _y;
+                if (_edited_x)
+                    if (double.TryParse(Input_x.Text, out double parsedX)) x = parsedX;
+                if (_edited_y)
+                    if (double.TryParse(Input_y.Text, out double parsedY)) y = parsedY;
                 return new Point(x, y);
             }
         }
@@ -97,12 +101,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
         private void Input_x_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             _edited_x = true;
-            _edited_y = false;
         }
 
         private void Input_y_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            _edited_x = false;
             _edited_y = true;
         }
 
@@ -173,7 +175,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
 
         #region 字段
 
-        private readonly string _format = "0.####";
+        private readonly string _format = "0.########";
 
         /// <summary>当前焦点</summary>
         private FocusInput _focus = FocusInput.None;

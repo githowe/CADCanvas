@@ -12,7 +12,7 @@
     <Grid x:Name="MainGrid">
         <Grid x:Name="EditBox"></Grid>
         <Grid x:Name="InfoBox">
-            <xwc:InfoBoard x:Name="InfoBoard" HorizontalAlignment="Left" VerticalAlignment="Bottom" MinWidth="200" Visibility="Collapsed"/>
+            <xwc:InfoBoard x:Name="InfoBoard" HorizontalAlignment="Left" VerticalAlignment="Bottom" MinWidth="200"/>
         </Grid>
     </Grid>
 </xw:XMainWindow>
