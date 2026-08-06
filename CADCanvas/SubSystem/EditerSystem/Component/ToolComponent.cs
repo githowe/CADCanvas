@@ -69,9 +69,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>
         /// 获取吸附至捕捉点的世界坐标，如果没有吸附至捕捉点，则返回当前鼠标的世界坐标
         /// </summary>
-        public Point GetSnapWorldPoint(out bool snapped)
+        public Point GetSnapWorldPoint(out bool snapped, out string snapName)
         {
             snapped = false;
+            snapName = "";
             SceneComponent scene = GetComponent<SceneComponent>();
             DebugInfoManager manager = DebugInfoManager.Instance;
 
@@ -101,6 +102,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
                 if (snapRect.Contains(mousePoint))
                 {
                     snapped = true;
+                    snapName = snapPoint.TypeName;
                     manager.UpdateInfo("捕捉点类型", snapPoint.TypeName);
                     manager.UpdateInfo("捕捉点坐标", snapPoint.WorldPoint.ToPointString("G17"));
                     return snapPoint.WorldPoint;
@@ -224,15 +226,15 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 获取起点与终点
             Point start = _layerComponent!.GetLineToolWorldStart();
             Point end = _layerComponent.GetLineToolWorldEnd();
-            // 两点相同则不创建直线
+            // 两点相同则不创建直线段
             if (start == end) return;
 
             DebugInfoManager.Instance.UpdateInfo("添加直线起点", start.ToPointString("G17"));
             DebugInfoManager.Instance.UpdateInfo("添加直线终点", end.ToPointString("G17"));
 
-            // 创建直线
-            VisualLine line = GeoCreator.Instance.CreateLine(start.X, start.Y, end.X, end.Y);
-            // 添加直线
+            // 创建直线段
+            VisualLineSegment line = GeoCreator.Instance.CreateLineSegment(start.X, start.Y, end.X, end.Y);
+            // 添加直线段
             _layerComponent.AddGraphic(line);
             // 更新图形
             _layerComponent.UpdateGraphic();

@@ -20,9 +20,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             _pen.StartLineCap = PenLineCap.Square;
             _pen.EndLineCap = PenLineCap.Square;
             _pen.Freeze();
-            _pen2.StartLineCap = PenLineCap.Square;
-            _pen2.EndLineCap = PenLineCap.Square;
-            _pen2.Freeze();
         }
 
         protected override void OnUpdate()
@@ -109,18 +106,17 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// </summary>
         private void DrawIntersection(Point point)
         {
-            double radius = _pointSize / 2;
+            double radius = _pointSize / 2 - 1;
             Point screenPoint = Grid.ToScreen(point, true);
             Point leftTop = new Point(screenPoint.X - radius, screenPoint.Y - radius);
             Point rightBottom = new Point(screenPoint.X + radius, screenPoint.Y + radius);
             Point leftBottom = new Point(screenPoint.X - radius, screenPoint.Y + radius);
             Point rightTop = new Point(screenPoint.X + radius, screenPoint.Y - radius);
-            _dc.DrawLine(_pen2, leftTop, rightBottom);
-            _dc.DrawLine(_pen2, leftBottom, rightTop);
+            _dc.DrawLine(_pen, leftTop, rightBottom);
+            _dc.DrawLine(_pen, leftBottom, rightTop);
         }
 
         private readonly Pen _pen = new Pen(new SolidColorBrush(Color.FromArgb(255, 0, 160, 0)), 2);
-        private readonly Pen _pen2 = new Pen(new SolidColorBrush(Color.FromArgb(255, 0, 160, 0)), 1);
         private readonly double _pointSize = 12;
     }
 }

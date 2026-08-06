@@ -1,4 +1,5 @@
 ﻿using CADCanvas.AppTool;
+using CADCanvas.SubSystem.DrawingSystem;
 using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
 
@@ -9,6 +10,7 @@ namespace CADCanvas
         public App()
         {
             Startup += App_Startup;
+            Exit += App_Exit;
         }
 
         private void App_Startup(object sender, StartupEventArgs e)
@@ -22,6 +24,12 @@ namespace CADCanvas
             CursorManager.Instance.Init();
             ImageManager.Instance.Init();
             TimerEngine.Instance.Start();
+            GeoTool.Instance.Init();
+        }
+
+        private void App_Exit(object sender, ExitEventArgs e)
+        {
+            GeoTool.Instance.Clear();
         }
     }
 }

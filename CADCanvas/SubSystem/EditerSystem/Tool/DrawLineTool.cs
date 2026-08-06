@@ -70,7 +70,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                         // 使控件保持在光标右下角
                         _host.MoveControl(_host.GetMousePoint().OffsetTo(20, 20));
                         // 更新坐标值
-                        Point snapedWorldPoint = _host.GetSnapWorldPoint(out bool snapped);
+                        Point snapedWorldPoint = _host.GetSnapWorldPoint(out bool snapped, out string snapName);
+                        if (snapped) 坐标信息!.SnapPointName = snapName;
+                        else 坐标信息!.SnapPointName = "";
                         坐标信息?.UpdatePoint(snapedWorldPoint);
                         // 将光标移动至捕捉点处
                         Point screenPoint = 网格图层.ToScreen(snapedWorldPoint, true);
@@ -315,7 +317,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             }
 
             // 设置世界终点
-            工具图层.WorldEnd = _host.GetSnapWorldPoint(out bool snapped);
+            工具图层.WorldEnd = _host.GetSnapWorldPoint(out bool snapped, out string _);
             // 将光标移动至捕捉点处
             if (snapped)
             {

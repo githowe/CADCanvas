@@ -4,10 +4,7 @@ using System.Windows.Media;
 
 namespace CADCanvas.SubSystem.DrawingSystem
 {
-    /// <summary>
-    /// 表示无限延伸的直线的可视化对象
-    /// </summary>
-    public class VisualLine : GeoVisual
+    public class VisualLineSegment : GeoVisual
     {
         public Point Start { get; set; } = new Point(0, 0);
 

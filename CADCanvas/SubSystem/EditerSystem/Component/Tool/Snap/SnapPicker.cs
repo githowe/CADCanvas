@@ -16,6 +16,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap
             foreach (var visual in visualList)
                 result.AddRange(visual.GetSnapPointList());
             // 再获取动态捕捉点：交点
+            List<Point> intersectionList = GetIntersection(visualList);
+            foreach (var item in intersectionList)
+            {
+                SnapPoint snapPoint = new SnapPoint()
+                {
+                    Type = SnapType.Intersection,
+                    WorldPoint = item
+                };
+                result.Add(snapPoint);
+            }
 
             return result;
         }
@@ -33,6 +43,23 @@ namespace CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap
                 {
                     result.Add(item);
                     break;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 获取交点
+        /// </summary>
+        private static List<Point> GetIntersection(List<GeoVisual> visualList)
+        {
+            List<Point> result = new List<Point>();
+            for (int index1 = 0; index1 < visualList.Count; index1++)
+            {
+                for (int index2 = index1 + 1; index2 < visualList.Count; index2++)
+                {
+                    List<Point> pointList = GeoTool.Instance.GetIntersection(visualList[index1], visualList[index2]);
+                    result.AddRange(pointList);
                 }
             }
             return result;

@@ -113,7 +113,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
 
             原物理长度 = PointTool.GetLength(_worldStart.Value, _worldEnd.Value);
             _当前物理长度 = 原物理长度;
-            原周角 = PointTool.GetAngle(_worldStart.Value.ToMathPoint(), _worldEnd.Value.ToMathPoint());
+            原周角 = PointTool.GetAngle(_worldStart.Value, _worldEnd.Value);
             _当前周角 = 原周角;
         }
 
@@ -138,7 +138,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             }
             // 更新终点坐标
             double endX = _worldStart!.Value.X + offsetx;
-            double endY = _worldStart.Value.Y - offsety;
+            double endY = _worldStart.Value.Y + offsety;
             _worldEnd = new Point(endX, endY);
         }
 

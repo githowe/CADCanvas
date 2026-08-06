@@ -31,6 +31,21 @@ namespace CADCanvas.SubSystem.DrawingSystem
             return line;
         }
 
+        /// <summary>
+        /// 创建直线段
+        /// </summary>
+        public VisualLineSegment CreateLineSegment(double x1, double y1, double x2, double y2)
+        {
+            IntPtr lineHandle = LineInterop.CreateLineSegment(x1, y1, x2, y2);
+            VisualLineSegment lineSegment = new VisualLineSegment
+            {
+                Handle = lineHandle,
+                Start = new Point(x1, y1),
+                End = new Point(x2, y2),
+            };
+            return lineSegment;
+        }
+
         #endregion
     }
 }

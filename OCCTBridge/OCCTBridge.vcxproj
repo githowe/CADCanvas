@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base.h" />
+    <ClInclude Include="GlobalCache.h" />
     <ClInclude Include="MainApi.h" />
   </ItemGroup>
   <ItemGroup>
@@ -137,7 +138,10 @@
 copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKG2d.dll" "$(OutDir)"
 copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKGeomBase.dll" "$(OutDir)"
 copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKMath.dll" "$(OutDir)"
-copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKService.dll" "$(OutDir)"</Command>
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKService.dll" "$(OutDir)"
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKGeomAlgo.dll" "$(OutDir)"
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKG3d.dll" "$(OutDir)"
+copy /Y "$(ProjectDir)..\OCCTLib\Dll\TKBRep.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

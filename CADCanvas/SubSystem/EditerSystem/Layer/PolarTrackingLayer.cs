@@ -43,7 +43,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             // 记录起点
             _worldStart = worldStart;
             // 计算角度
-            double angle = PointTool.GetAngle(worldStart.ToMathPoint(), worldEnd.ToMathPoint());
+            double angle = PointTool.GetAngle(worldStart, worldEnd);
             // 吸附并记录角度
             _angle = SnapAngle(angle);
             DebugInfoManager.Instance.UpdateInfo("极轴追踪", $"{angle:0.########} > {_angle:0.########}");

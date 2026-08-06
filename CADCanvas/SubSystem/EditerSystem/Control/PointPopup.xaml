@@ -9,7 +9,7 @@
     <Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
             <Border Background="#2b2b2b" BorderThickness="1" BorderBrush="#5b5b5b">
-                <Label Foreground="White" Content="指定第一个点：" Padding="0" VerticalAlignment="Center" FontSize="12" Margin="6,0"/>
+                <Label x:Name="Label_Hint" Foreground="White" Content="指定第一个点" Padding="0" VerticalAlignment="Center" FontSize="12" Margin="6,0"/>
             </Border>
             <Border Background="#2b2b2b" BorderThickness="1" BorderBrush="#464646" Margin="10,0,0,0">
                 <Label Foreground="White" Content="X" Padding="0" VerticalAlignment="Center" FontSize="12" Margin="6,0"/>

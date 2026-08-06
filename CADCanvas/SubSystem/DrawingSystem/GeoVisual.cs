@@ -10,6 +10,9 @@ namespace CADCanvas.SubSystem.DrawingSystem
     /// </summary>
     public abstract class GeoVisual : IBox
     {
+        /// <summary>图形句柄</summary>
+        public IntPtr Handle { get; set; } = IntPtr.Zero;
+
         public abstract Rect Bounds { get; }
 
         public virtual void Init() { }

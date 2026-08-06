@@ -28,6 +28,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
 
         #region 属性
 
+        public string SnapPointName
+        {
+            get => _snapPointName;
+            set
+            {
+                _snapPointName = value;
+                if (_snapPointName == "")
+                    Label_Hint.Content = "指定第一个点";
+                else
+                    Label_Hint.Content = _snapPointName;
+            }
+        }
+
         public Point Point
         {
             get
@@ -190,6 +203,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Control
 
         private double _x = 0;
         private double _y = 0;
+        private string _snapPointName = "";
 
         #endregion
     }

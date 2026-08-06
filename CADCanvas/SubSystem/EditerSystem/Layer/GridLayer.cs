@@ -106,7 +106,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             Point worldPoint = new Point();
             double pixelPhysicsLength = (double)_gridPhysicsSize / _gridPixelSize;
             worldPoint.X = (screenPoint.X - Center.X) * pixelPhysicsLength;
-            worldPoint.Y = (screenPoint.Y - Center.Y) * pixelPhysicsLength;
+            worldPoint.Y = -(screenPoint.Y - Center.Y) * pixelPhysicsLength;
             return worldPoint;
         }
 
@@ -178,6 +178,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         private Point ToScreen(double x, double y, bool round)
         {
             Point screenPoint = new Point();
+            y = -y;
             double pixelPhysicsLength = (double)_gridPhysicsSize / _gridPixelSize;
             if (round)
             {
