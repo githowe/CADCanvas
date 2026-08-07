@@ -347,6 +347,21 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     极轴追踪图层.Update();
                     工具图层.当前周角 = angle;
                     直线信息.原角度 = angle;
+                    // 如果吸附至极轴，则计算极轴与附近曲线的交点，并将终点吸附至交点
+                    if (极轴追踪图层.Snapped)
+                    {
+                        工具图层.WorldEnd = _host.GetSnapToIntersectionWithPolarAxis(工具图层.WorldStart.Value, angle, out bool snappedToIntersection);
+                        if (snappedToIntersection)
+                        {
+                            Point screenPoint = 网格图层.ToScreen(工具图层.WorldEnd.Value, true);
+                            光标图层.MoveCursor(screenPoint.OffsetTo(-0.5, -0.5));
+                            // 更新直线信息
+                            工具图层.UpdateLineInfo();
+                            // 设置直线信息控件的原长度与原角度
+                            直线信息.原长度 = 工具图层.原物理长度;
+                            直线信息.原角度 = 工具图层.原周角;
+                        }
+                    }
                 }
             }
 

@@ -118,6 +118,65 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             return mouseWorldPoint;
         }
 
+        /// <summary>
+        /// 获取吸附至附近图形与极轴的交点
+        /// </summary>
+        public Point GetSnapToIntersectionWithPolarAxis(Point worldStart, double angle, out bool snapped)
+        {
+            snapped = false;
+            SceneComponent scene = GetComponent<SceneComponent>();
+
+            // 获取鼠标坐标
+            Point mousePoint = GetMousePoint();
+            Point mouseWorldPoint = _layerComponent.GetWorldPoint(mousePoint);
+            // 以鼠标为中心点，创建一个小矩形区域
+            Rect rect = new Rect(mousePoint.X - 24, mousePoint.Y - 24, 48, 48);
+            // 转换为世界坐标
+            Point leftTop = _layerComponent.GetWorldPoint(rect.TopLeft);
+            Point rightBottom = _layerComponent.GetWorldPoint(rect.BottomRight);
+            Rect worldRect = new Rect(leftTop, rightBottom);
+            // 更新命中包围盒
+            scene.UpdateHitedBounds(worldRect);
+            // 创建捕捉点列表
+            List<SnapPoint> snapPointList = new List<SnapPoint>();
+            // 遍历命中图形，获取与极轴的交点
+            foreach (GeoVisual visual in scene.HoveredVisual)
+            {
+                List<Point> intersectionPoints = GeoTool.Instance.GetIntersection(visual, worldStart, angle);
+                foreach (Point intersection in intersectionPoints)
+                {
+                    SnapPoint snapPoint = new SnapPoint
+                    {
+                        Type = SnapType.Intersection,
+                        WorldPoint = intersection
+                    };
+                    snapPointList.Add(snapPoint);
+                }
+            }
+            // 获取鼠标范围内的第一个捕捉点
+            snapPointList = scene.UpdateSnapPoint(snapPointList, mousePoint);
+            // 有捕捉点
+            if (snapPointList.Count > 0)
+            {
+                // 获取第一个捕捉点
+                SnapPoint snapPoint = snapPointList[0];
+                // 获取捕捉点的屏幕坐标
+                Point snapScreenPoint = _layerComponent.GetScreenPoint(snapPoint.WorldPoint);
+                // 捕捉点屏幕区域
+                Rect snapRect = new Rect(snapScreenPoint.X - 8, snapScreenPoint.Y - 8, 16, 16);
+                // 如果鼠标在捕捉点屏幕区域内，则返回捕捉点的世界坐标
+                if (snapRect.Contains(mousePoint))
+                {
+                    snapped = true;
+                    return snapPoint.WorldPoint;
+                }
+                // 否则，返回当前鼠标的世界坐标
+                return mouseWorldPoint;
+            }
+            // 无捕捉点，返回当前鼠标的世界坐标
+            return mouseWorldPoint;
+        }
+
         public Size GetLayerSize() => _host.Layer_Mouse.RenderSize;
 
         /// <summary>

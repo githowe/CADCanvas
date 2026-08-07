@@ -1,4 +1,5 @@
 ﻿using CADCanvas.SubSystem.DebugSystem;
+using CADCanvas.SubSystem.DrawingSystem;
 using System.Windows;
 using System.Windows.Media;
 using XLogic.Wpf;
@@ -16,6 +17,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
 
         public GridLayer? Grid { get; set; } = null;
 
+        public bool Snapped => _snapped;
+
         #endregion
 
         #region 公开方法
@@ -32,7 +35,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         {
             _worldStart = new Point();
             _angle = 0;
-            _snaped = false;
+            _snapped = false;
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
 
         protected override void OnUpdate()
         {
-            if (_snaped)
+            if (_snapped)
             {
                 Point screenStart = Grid.ToScreen(_worldStart);
                 Point point = GetPointIntersectionScreen(screenStart, _angle);
@@ -74,10 +77,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             double nearest = Math.Round(angle / _trackingAngle) * _trackingAngle;
             if (Math.Abs(nearest - angle) <= _snapThreshold)
             {
-                _snaped = true;
+                _snapped = true;
                 return nearest % 360;
             }
-            _snaped = false;
+            _snapped = false;
             return angle;
         }
 
@@ -152,7 +155,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// <summary>吸附阈值</summary>
         private readonly double _snapThreshold = 2;
 
-        private bool _snaped = false;
+        private bool _snapped = false;
 
         #endregion
     }

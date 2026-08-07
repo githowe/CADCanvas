@@ -15,7 +15,7 @@ namespace XLogic.Wpf
         }
 
         /// <summary>
-        /// 计算两点之间的角度，返回值周角度数
+        /// 计算两点之间的角度，返回周角度数
         /// </summary>
         public static double GetAngle(Point mathStart, Point mathEnd)
         {

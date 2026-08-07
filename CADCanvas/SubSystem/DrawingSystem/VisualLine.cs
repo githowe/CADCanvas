@@ -9,25 +9,15 @@ namespace CADCanvas.SubSystem.DrawingSystem
     /// </summary>
     public class VisualLine : GeoVisual
     {
-        public Point Start { get; set; } = new Point(0, 0);
+        public Point Start { get; set; } = new Point();
 
-        public Point End { get; set; } = new Point(0, 0);
+        public Point End { get; set; } = new Point();
 
         public Color LineColor { get; set; } = Colors.White;
 
         public double LineWidth { get; set; } = 1.0;
 
-        public override Rect Bounds
-        {
-            get
-            {
-                double x1 = Math.Min(Start.X, End.X);
-                double y1 = Math.Min(Start.Y, End.Y);
-                double x2 = Math.Max(Start.X, End.X);
-                double y2 = Math.Max(Start.Y, End.Y);
-                return new Rect(new Point(x1, y1), new Point(x2, y2));
-            }
-        }
+        public override Rect Bounds => Rect.Empty;
 
         public override void Init()
         {
@@ -49,6 +39,45 @@ namespace CADCanvas.SubSystem.DrawingSystem
             // 添加起点、中点、终点
             result.Add(new SnapPoint { Type = SnapType.Endpoint, WorldPoint = Start });
             result.Add(new SnapPoint { Type = SnapType.Midpoint, WorldPoint = new Point((Start.X + End.X) / 2, (Start.Y + End.Y) / 2) });
+            result.Add(new SnapPoint { Type = SnapType.Endpoint, WorldPoint = End });
+
+            return result;
+        }
+
+        private Pen? _pen = null;
+    }
+
+    /// <summary>
+    /// 表示终点无限延伸的射线的可视化对象
+    /// </summary>
+    public class VisualRay : GeoVisual
+    {
+        public Point Start { get; set; } = new Point();
+
+        public Point End { get; set; } = new Point();
+
+        public Color LineColor { get; set; } = Colors.White;
+
+        public double LineWidth { get; set; } = 1.0;
+
+        public override Rect Bounds => Rect.Empty;
+
+        public override void Init()
+        {
+            
+        }
+
+        public override void Draw(DrawingContext dc, IWorldGrid grid)
+        {
+            dc.DrawLine(_pen, grid.ToScreen(Start), grid.ToScreen(End));
+        }
+
+        public override List<SnapPoint> GetSnapPointList()
+        {
+            List<SnapPoint> result = new List<SnapPoint>();
+
+            // 添加起点、终点
+            result.Add(new SnapPoint { Type = SnapType.Endpoint, WorldPoint = Start });
             result.Add(new SnapPoint { Type = SnapType.Endpoint, WorldPoint = End });
 
             return result;

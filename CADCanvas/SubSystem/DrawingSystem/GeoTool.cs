@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Windows;
 using XLogic.AppFrame;
+using XLogic.Wpf;
 
 namespace CADCanvas.SubSystem.DrawingSystem
 {
@@ -38,6 +39,12 @@ namespace CADCanvas.SubSystem.DrawingSystem
         [DllImport("OCCTBridge.dll")]
         private static extern int GetIntersection(IntPtr curve1, IntPtr curve2);
 
+        /// <summary>
+        /// 获取曲线与射线的交点
+        /// </summary>
+        [DllImport("OCCTBridge.dll")]
+        private static extern int GetIntersectionWithRay(IntPtr curve, double x, double y, double dx, double dy);
+
         #endregion
 
         #region 生命周期
@@ -67,6 +74,29 @@ namespace CADCanvas.SubSystem.DrawingSystem
             List<Point> result = new List<Point>();
             // 求交并返回交点数量
             int count = GetIntersection(visual1.Handle, visual2.Handle);
+            if (count <= 0) return result;
+            // 生成交点列表
+            for (int counter = 0; counter < count; counter++)
+            {
+                double x = PointCache[counter * 2];
+                double y = PointCache[counter * 2 + 1];
+                result.Add(new Point(x, y));
+            }
+            // 返回结果
+            return result;
+        }
+
+        /// <summary>
+        /// 获取几何图形与射线的全部交点
+        /// </summary>
+        public List<Point> GetIntersection(GeoVisual visual, Point start, double angle)
+        {
+            List<Point> result = new List<Point>();
+            // 求交并返回交点数量
+            double rad = MathTool.AngleToRadian(angle);
+            double dx = Math.Cos(rad);
+            double dy = Math.Sin(rad);
+            int count = GetIntersectionWithRay(visual.Handle, start.X, start.Y, dx, dy);
             if (count <= 0) return result;
             // 生成交点列表
             for (int counter = 0; counter < count; counter++)

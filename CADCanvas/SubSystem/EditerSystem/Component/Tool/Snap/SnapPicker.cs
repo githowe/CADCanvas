@@ -30,6 +30,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap
             return result;
         }
 
+        /// <summary>
+        /// 拾取矩形范围内的图形上的捕捉点
+        /// </summary>
         public static List<SnapPoint> PickSnapPoint(List<GeoVisual> visualList, Rect rect)
         {
             List<SnapPoint> result = new List<SnapPoint>();
@@ -39,6 +42,23 @@ namespace CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap
             foreach (var item in all)
             {
                 // 找到一个就退出
+                if (rect.Contains(item.WorldPoint))
+                {
+                    result.Add(item);
+                    break;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 拾取矩形范围内的捕捉点
+        /// </summary>
+        public static List<SnapPoint> PickSnapPoint(List<SnapPoint> souceList, Rect rect)
+        {
+            List<SnapPoint> result = new List<SnapPoint>();
+            foreach (var item in souceList)
+            {
                 if (rect.Contains(item.WorldPoint))
                 {
                     result.Add(item);

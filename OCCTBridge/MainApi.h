@@ -15,6 +15,7 @@ public:
 
 public:
 	virtual Handle(Geom2d_Curve) GetCurve() { return nullptr; }
+	virtual void FreeCurve() {}
 };
 
 /// <summary>
@@ -25,6 +26,7 @@ class LineWrapper : public CurveWrapper
 public:
 	Handle(Geom2d_Line) Line;
 	Handle(Geom2d_Curve) GetCurve() override { return Line; }
+	void FreeCurve() override { Line.Nullify(); }
 };
 
 /// <summary>
@@ -35,6 +37,7 @@ class LineSegmentWrapper : public CurveWrapper
 public:
 	Handle(Geom2d_TrimmedCurve) LineSegment;
 	Handle(Geom2d_Curve) GetCurve() override { return LineSegment; }
+	void FreeCurve() override { LineSegment.Nullify(); }
 };
 
 /// <summary>
@@ -53,6 +56,26 @@ dll_export void* CreateLine(double x1, double y1, double x2, double y2);
 dll_export void* CreateLineSegment(double x1, double y1, double x2, double y2);
 
 /// <summary>
+/// 设置直线段起点
+/// </summary>
+dll_export void SetLineSegmentStart(LineSegmentWrapper* wrapper, double x, double y);
+
+/// <summary>
+/// 设置直线段终点
+/// </summary>
+dll_export void SetLineSegmentEnd(LineSegmentWrapper* wrapper, double x, double y);
+
+/// <summary>
+/// 释放曲线
+/// </summary>
+dll_export void FreeCurve(CurveWrapper* curve);
+
+/// <summary>
 /// 获取两条曲线的交点
 /// </summary>
 dll_export int GetIntersection(CurveWrapper* curve1, CurveWrapper* curve2);
+
+/// <summary>
+/// 获取曲线与射线的交点
+/// </summary>
+dll_export int GetIntersectionWithRay(CurveWrapper* curve, double x, double y, double dx, double dy);
