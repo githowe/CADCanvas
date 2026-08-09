@@ -14,19 +14,21 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     {
         #region 图层
 
-        public GridLayer GridLayer => _gridLayer;
+        public GridLayer GridLayer => 网格图层;
 
-        public GraphicLayer GraphicLayer => _graphicLayer;
+        public GraphicLayer GraphicLayer => 图形图层;
 
-        public LineToolLayer LineToolLayer => _lineToolLayer;
+        public LineToolLayer LineToolLayer => 直线工具图层;
 
-        public RTreeViewLayer RTreeViewLayer => _rTreeViewLayer;
+        public CircleToolLayer CircleToolLayer => 圆形工具图层;
 
-        public PolarTrackingLayer PolarTrackingLayer => _polarTrackingLayer;
+        public RTreeViewLayer RTreeViewLayer => 空间索引可视化图层;
 
-        public SnapMarkLayer SnapMarkLayer => _snapMarkLayer;
+        public PolarTrackingLayer PolarTrackingLayer => 极轴追踪图层;
 
-        public CursorLayer CursorLayer => _cursorLayer;
+        public SnapMarkLayer SnapMarkLayer => 捕捉标记图层;
+
+        public CursorLayer CursorLayer => 光标图层;
 
         #endregion
 
@@ -34,20 +36,20 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public Point GetScreenPoint() => Mouse.GetPosition(_host.Layer_Mouse);
 
-        public Point GetScreenPoint(Point worldPoint) => _gridLayer.ToScreen(worldPoint);
+        public Point GetScreenPoint(Point worldPoint) => 网格图层.ToScreen(worldPoint);
 
         /// <summary>
         /// 获取当前鼠标的世界坐标
         /// </summary>
-        public Point GetWorldPoint() => _gridLayer.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
+        public Point GetWorldPoint() => 网格图层.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
 
-        public Point GetWorldPoint(Point screenPoint) => _gridLayer.ToWorld(screenPoint);
+        public Point GetWorldPoint(Point screenPoint) => 网格图层.ToWorld(screenPoint);
 
         public void UpdateGrid()
         {
-            _gridLayer.Width = _host.LayerBox.ActualWidth;
-            _gridLayer.Height = _host.LayerBox.ActualHeight;
-            _gridLayer.Update();
+            网格图层.Width = _host.LayerBox.ActualWidth;
+            网格图层.Height = _host.LayerBox.ActualHeight;
+            网格图层.Update();
         }
 
         /// <summary>
@@ -74,19 +76,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>
         /// 平移网格
         /// </summary>
-        public void MoveGrid(Point offset) => _gridLayer.MoveLayer(offset);
+        public void MoveGrid(Point offset) => 网格图层.MoveLayer(offset);
 
         /// <summary>
         /// 应用平移
         /// </summary>
-        public void ApplyMoveGrid() => _gridLayer.ApplyOffset();
+        public void ApplyMoveGrid() => 网格图层.ApplyOffset();
 
         /// <summary>
         /// 缩放网格
         /// </summary>
         public void ResizeGrid(MouseWheelEventArgs e)
         {
-            _gridLayer.ResizeLayer(Mouse.GetPosition(_host.Layer_Mouse), e.Delta / 120);
+            网格图层.ResizeLayer(Mouse.GetPosition(_host.Layer_Mouse), e.Delta / 120);
         }
 
         #region 图形图层
@@ -97,12 +99,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public void AddGraphic(GeoVisual graphic)
         {
             graphic.Init();
-            _graphicLayer.GeoVisualList.Add(graphic);
+            图形图层.GeoVisualList.Add(graphic);
         }
 
         public void UpdateGraphic()
         {
-            _graphicLayer.Update();
+            图形图层.Update();
         }
 
         #endregion
@@ -112,19 +114,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// <summary>
         /// 获取直线工具世界起点
         /// </summary>
-        public Point GetLineToolWorldStart() => _lineToolLayer.WorldStart.Value;
+        public Point GetLineToolWorldStart() => 直线工具图层.WorldStart.Value;
 
         /// <summary>
         /// 获取直线工具世界终点
         /// </summary>
-        public Point GetLineToolWorldEnd() => _lineToolLayer.WorldEnd.Value;
+        public Point GetLineToolWorldEnd() => 直线工具图层.WorldEnd.Value;
 
         /// <summary>
         /// 设置直线工具起点
         /// </summary>
         public void SetLineToolStart(Point point)
         {
-            _lineToolLayer.WorldStart = point;
+            直线工具图层.WorldStart = point;
         }
 
         /// <summary>
@@ -132,9 +134,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void ClearLineTool()
         {
-            _lineToolLayer.WorldStart = null;
-            _lineToolLayer.WorldEnd = null;
-            _lineToolLayer.Clear();
+            直线工具图层.WorldStart = null;
+            直线工具图层.WorldEnd = null;
+            直线工具图层.Clear();
         }
 
         #endregion
@@ -145,40 +147,38 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         protected override void Init()
         {
-            _gridLayer = new GridLayer();
-            _host.LayerBox.Children.Add(_gridLayer);
-            _gridLayer.Init();
-            _layerList.Add(_gridLayer);
+            // 添加绘图图层
+            网格图层 = new GridLayer();
+            _host.LayerBox.Children.Add(网格图层);
+            _layerList.Add(网格图层);
+            图形图层 = new GraphicLayer { Grid = 网格图层 };
+            _host.LayerBox.Children.Add(图形图层);
+            _layerList.Add(图形图层);
+            // 添加工具图层
+            直线工具图层 = new LineToolLayer { Grid = 网格图层 };
+            _host.LayerBox.Children.Add(直线工具图层);
+            _layerList.Add(直线工具图层);
+            圆形工具图层 = new CircleToolLayer { Grid = 网格图层 };
+            _host.LayerBox.Children.Add(圆形工具图层);
+            _layerList.Add(圆形工具图层);
+            // 添加可视化图层
+            空间索引可视化图层 = new RTreeViewLayer { Grid = 网格图层 };
+            _host.Layer_RTree.Children.Add(空间索引可视化图层);
+            _layerList.Add(空间索引可视化图层);
+            // 添加标记图层
+            极轴追踪图层 = new PolarTrackingLayer { Grid = 网格图层 };
+            _host.Layer_Mark.Children.Add(极轴追踪图层);
+            _layerList.Add(极轴追踪图层);
+            捕捉标记图层 = new SnapMarkLayer { Grid = 网格图层 };
+            _host.Layer_Mark.Children.Add(捕捉标记图层);
+            _layerList.Add(捕捉标记图层);
+            // 添加光标图层
+            光标图层 = new CursorLayer();
+            _host.Layer_Cursor.Children.Add(光标图层);
+            _layerList.Add(光标图层);
 
-            _graphicLayer = new GraphicLayer { Grid = _gridLayer };
-            _host.LayerBox.Children.Add(_graphicLayer);
-            _graphicLayer.Init();
-            _layerList.Add(_graphicLayer);
-
-            _lineToolLayer = new LineToolLayer { Grid = _gridLayer };
-            _host.LayerBox.Children.Add(_lineToolLayer);
-            _lineToolLayer.Init();
-            _layerList.Add(_lineToolLayer);
-
-            _rTreeViewLayer = new RTreeViewLayer { Grid = _gridLayer };
-            _host.Layer_RTree.Children.Add(_rTreeViewLayer);
-            _rTreeViewLayer.Init();
-            _layerList.Add(_rTreeViewLayer);
-
-            _polarTrackingLayer = new PolarTrackingLayer { Grid = _gridLayer };
-            _host.Layer_Mark.Children.Add(_polarTrackingLayer);
-            _polarTrackingLayer.Init();
-            _layerList.Add(_polarTrackingLayer);
-
-            _snapMarkLayer = new SnapMarkLayer { Grid = _gridLayer };
-            _host.Layer_Mark.Children.Add(_snapMarkLayer);
-            _snapMarkLayer.Init();
-            _layerList.Add(_snapMarkLayer);
-
-            _cursorLayer = new CursorLayer();
-            _host.Layer_Cursor.Children.Add(_cursorLayer);
-            _cursorLayer.Init();
-            _layerList.Add(_cursorLayer);
+            // 初始化图层
+            foreach (var item in _layerList) item.Init();
         }
 
         protected override void Enable()
@@ -197,35 +197,37 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         #region 绘图图层
 
         /// <summary>网格</summary>
-        private GridLayer? _gridLayer;
+        private GridLayer? 网格图层;
         /// <summary>图形 </summary>
-        private GraphicLayer? _graphicLayer;
+        private GraphicLayer? 图形图层;
 
         #endregion
 
-        #region 工具图层
+        #region 工具图层 - 各种工具的可视化图层
 
         /// <summary>直线工具</summary>
-        private LineToolLayer? _lineToolLayer;
+        private LineToolLayer? 直线工具图层;
+        /// <summary>圆形工具</summary>
+        private CircleToolLayer? 圆形工具图层;
 
         #endregion
 
-        #region 可视化图层
+        #region 可视化图层 - 用于调试
 
-        private RTreeViewLayer? _rTreeViewLayer;
+        private RTreeViewLayer? 空间索引可视化图层;
 
         #endregion
 
         #region 标记图层
 
         /// <summary>极轴追踪</summary>
-        private PolarTrackingLayer? _polarTrackingLayer;
+        private PolarTrackingLayer? 极轴追踪图层;
         /// <summary>捕捉标记</summary>
-        private SnapMarkLayer? _snapMarkLayer;
+        private SnapMarkLayer? 捕捉标记图层;
 
         #endregion
 
-        private CursorLayer? _cursorLayer;
+        private CursorLayer? 光标图层;
 
         /// <summary>图层列表</summary>
         private readonly List<DrawingLayer> _layerList = new List<DrawingLayer>();

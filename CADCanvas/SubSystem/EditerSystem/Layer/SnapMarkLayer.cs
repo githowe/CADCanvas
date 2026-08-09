@@ -20,6 +20,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             _pen.StartLineCap = PenLineCap.Square;
             _pen.EndLineCap = PenLineCap.Square;
             _pen.Freeze();
+            _pen2.StartLineCap = PenLineCap.Square;
+            _pen2.EndLineCap = PenLineCap.Square;
+            _pen2.Freeze();
+            _pen3.StartLineCap = PenLineCap.Square;
+            _pen3.EndLineCap = PenLineCap.Square;
+            _pen3.Freeze();
         }
 
         protected override void OnUpdate()
@@ -98,7 +104,20 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// </summary>
         private void DrawCenter(Point point)
         {
-
+            double radius = _pointSize / 2 + 1;
+            Point screenPoint = Grid.ToScreen(point, true);
+            // 绘制圆形
+            _dc.DrawEllipse(null, _pen2, screenPoint, radius, radius);
+            // 绘制十字线
+            double lineRadius = radius - 3;
+            double left = screenPoint.X - lineRadius;
+            double right = screenPoint.X + lineRadius;
+            double top = screenPoint.Y - lineRadius;
+            double bottom = screenPoint.Y + lineRadius;
+            double centerX = screenPoint.X;
+            double centerY = screenPoint.Y;
+            _dc.DrawLine(_pen3, new Point(left, centerY), new Point(right, centerY));
+            _dc.DrawLine(_pen3, new Point(centerX, top), new Point(centerX, bottom));
         }
 
         /// <summary>
@@ -117,6 +136,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         }
 
         private readonly Pen _pen = new Pen(new SolidColorBrush(Color.FromArgb(255, 0, 160, 0)), 2);
+        private readonly Pen _pen2 = new Pen(new SolidColorBrush(Color.FromArgb(255, 0, 160, 0)), 1);
+        private readonly Pen _pen3 = new Pen(new SolidColorBrush(Color.FromArgb(255, 255, 255, 255)), 1);
         private readonly double _pointSize = 12;
     }
 }

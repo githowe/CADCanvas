@@ -46,6 +46,21 @@ namespace CADCanvas.SubSystem.DrawingSystem
             return lineSegment;
         }
 
+        /// <summary>
+        /// 创建圆形
+        /// </summary>
+        public VisualCircle CreateCircle(double centerX, double centerY, double radius)
+        {
+            IntPtr circleHandle = CircleInterop.CreateCircle(centerX, centerY, radius);
+            VisualCircle circle = new VisualCircle
+            {
+                Handle = circleHandle,
+                Center = new Point(centerX, centerY),
+                Radius = radius,
+            };
+            return circle;
+        }
+
         #endregion
     }
 }

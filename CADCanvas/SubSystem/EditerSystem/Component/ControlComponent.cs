@@ -10,6 +10,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         PointPopup,
         /// <summary>直线绘制信息：长度、角度</summary>
         DrawLineInfo,
+        /// <summary>长度</summary>
+        LengthPopup,
     }
 
     /// <summary>
@@ -66,6 +68,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 注册控件
             _popupControls.Add(PopupType.PointPopup, CreatePointPopup);
             _popupControls.Add(PopupType.DrawLineInfo, CreateLineInfoPopup);
+            _popupControls.Add(PopupType.LengthPopup, CreateLengthPopup);
         }
 
         #endregion
@@ -75,6 +78,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         private UserControl CreatePointPopup() => new Control.PointPopup();
 
         private UserControl CreateLineInfoPopup() => new Control.LineInfoPopup();
+
+        private UserControl CreateLengthPopup() => new Control.LengthPopup();
 
         #endregion
 

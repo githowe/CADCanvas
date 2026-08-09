@@ -1,44 +1,6 @@
 #pragma once
 
-#include "Base.h"
-
-#include <Geom2d_Line.hxx>
-#include <GCE2d_MakeSegment.hxx>
-
-/// <summary>
-/// 表示平面上的曲线
-/// </summary>
-class CurveWrapper
-{
-public:
-	virtual ~CurveWrapper() = default;
-
-public:
-	virtual Handle(Geom2d_Curve) GetCurve() { return nullptr; }
-	virtual void FreeCurve() {}
-};
-
-/// <summary>
-/// 表示无限延伸的直线
-/// </summary>
-class LineWrapper : public CurveWrapper
-{
-public:
-	Handle(Geom2d_Line) Line;
-	Handle(Geom2d_Curve) GetCurve() override { return Line; }
-	void FreeCurve() override { Line.Nullify(); }
-};
-
-/// <summary>
-/// 表示直线段
-/// </summary>
-class LineSegmentWrapper : public CurveWrapper
-{
-public:
-	Handle(Geom2d_TrimmedCurve) LineSegment;
-	Handle(Geom2d_Curve) GetCurve() override { return LineSegment; }
-	void FreeCurve() override { LineSegment.Nullify(); }
-};
+#include "Wrapper.h"
 
 /// <summary>
 /// 初始化二维点缓存
@@ -54,6 +16,11 @@ dll_export void* CreateLine(double x1, double y1, double x2, double y2);
 /// 创建直线段
 /// </summary>
 dll_export void* CreateLineSegment(double x1, double y1, double x2, double y2);
+
+/// <summary>
+/// 创建圆形
+/// </summary>
+dll_export void* CreateCircle(double centerX, double centerY, double radius);
 
 /// <summary>
 /// 设置直线段起点

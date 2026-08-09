@@ -37,13 +37,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                 光标图层.MoveCursor(_host.GetMousePoint());
                 if (_stage == DrawLineStage.SelectStart)
                 {
-                    if (坐标信息 == null)
+                    if (坐标控件 == null)
                     {
                         Point point = _host.GetMousePoint().OffsetTo(20, 20);
-                        坐标信息 = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
-                        坐标信息?.UpdatePoint(_host.GetWorldPoint());
-                        if (坐标信息 != null)
-                            坐标信息.Loaded += (s, e) => 坐标信息.FocusX();
+                        坐标控件 = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
+                        坐标控件?.UpdatePoint(_host.GetWorldPoint());
+                        if (坐标控件 != null)
+                            坐标控件.Loaded += (s, e) => 坐标控件.FocusX();
                     }
                 }
             });
@@ -71,14 +71,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                         _host.MoveControl(_host.GetMousePoint().OffsetTo(20, 20));
                         // 更新坐标值
                         Point snapedWorldPoint = _host.GetSnapWorldPoint(out bool snapped, out string snapName);
-                        if (snapped) 坐标信息!.SnapPointName = snapName;
-                        else 坐标信息!.SnapPointName = "";
-                        坐标信息?.UpdatePoint(snapedWorldPoint);
+                        if (snapped) 坐标控件!.SnapPointName = snapName;
+                        else 坐标控件!.SnapPointName = "";
+                        坐标控件?.UpdatePoint(snapedWorldPoint);
                         // 将光标移动至捕捉点处
                         Point screenPoint = 网格图层.ToScreen(snapedWorldPoint, true);
                         光标图层.MoveCursor(screenPoint.OffsetTo(-0.5, -0.5));
                         // 全选
-                        坐标信息?.SelectAll();
+                        坐标控件?.SelectAll();
                         break;
                     case DrawLineStage.SelectNext:
                         SelectNext();
@@ -92,9 +92,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             NewTree("设置起点", (_) =>
             {
                 _host.CaptureOperationLayer();
-                工具图层.WorldStart = 坐标信息.Point;
+                工具图层.WorldStart = 坐标控件.Point;
                 _host.UnloadControl(PopupType.PointPopup);
-                坐标信息 = null;
+                坐标控件 = null;
             });
             NewNode(Behaviors.LeftUp, (_) =>
             {
@@ -124,16 +124,18 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                 if (工具图层.WorldEnd == null) return;
 
                 // 长度或角度发生变化，则通过长度与角度移动终点位置
-                if (直线信息.输入长度 != 工具图层.原物理长度 || 直线信息.输入角度 != 工具图层.原周角)
+                if (直线信息控件.输入长度 != 工具图层.原物理长度 || 直线信息控件.输入角度 != 工具图层.原周角)
                 {
-                    工具图层.当前物理长度 = 直线信息.输入长度;
-                    工具图层.当前周角 = 直线信息.输入角度;
+                    工具图层.当前物理长度 = 直线信息控件.输入长度;
+                    工具图层.当前周角 = 直线信息控件.输入角度;
                     工具图层.MoveWorldEnd();
                 }
                 _host.LineTool_SetNext();
-                直线信息?.Reset();
+                直线信息控件?.Reset();
                 极轴追踪图层.Clear();
                 极轴追踪图层.Reset();
+                捕捉标记图层.SnapPointList.Clear();
+                捕捉标记图层.Clear();
             });
             NewNode(Behaviors.LeftUp, (_) =>
             {
@@ -189,6 +191,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             网格图层 = layerComponent.GridLayer;
             工具图层 = layerComponent.LineToolLayer;
             极轴追踪图层 = layerComponent.PolarTrackingLayer;
+            捕捉标记图层 = layerComponent.SnapMarkLayer;
             光标图层 = layerComponent.CursorLayer;
         }
 
@@ -204,6 +207,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             manager.AddInfo("极轴追踪", "");
             manager.AddInfo("捕捉点类型", "捕捉点坐标", "");
             manager.AddInfo("添加直线起点", "添加直线终点", "");
+        }
+
+        public override void Clear()
+        {
+            ResetTree();
+            _host.ReleaseOperationLayer();
+            捕捉标记图层.SnapPointList.Clear();
+            捕捉标记图层.Clear();
         }
 
         public override void OnLeftButtonDown(BehaviorArgs? args = null)
@@ -229,7 +240,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     // 选择起点阶段：完成工具
                     case DrawLineStage.SelectStart:
                         _host.UnloadControl(PopupType.PointPopup);
-                        坐标信息 = null;
+                        坐标控件 = null;
                         DebugInfoManager.Instance.ClearInfo();
                         Finished?.Invoke();
                         break;
@@ -242,23 +253,23 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                             _stage = DrawLineStage.SelectStart;
                             // 卸载直线信息控件
                             _host.UnloadControl(PopupType.DrawLineInfo);
-                            直线信息 = null;
+                            直线信息控件 = null;
                             // 清空极轴追踪图层
                             极轴追踪图层.Clear();
                             极轴追踪图层.Reset();
                             // 重新加载坐标控件
                             Point point = _host.GetMousePoint().OffsetTo(20, 20);
-                            坐标信息 = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
-                            坐标信息?.UpdatePoint(_host.GetWorldPoint());
-                            if (坐标信息 != null)
-                                坐标信息.Loaded += (s, e) => 坐标信息.FocusX();
+                            坐标控件 = (PointPopup?)_host.LoadControl(PopupType.PointPopup, point);
+                            坐标控件?.UpdatePoint(_host.GetWorldPoint());
+                            if (坐标控件 != null)
+                                坐标控件.Loaded += (s, e) => 坐标控件.FocusX();
                         }
                         break;
                 }
             }
             // 再交给行为树处理按键
             base.OnKeyDown(e);
-            // 禁止系统处理Tab、Esc键
+            // 禁止系统处理Tab、Esc、Enter键
             if (e.Key is Key.Tab or Key.Escape or Key.Enter) e.Handled = true;
         }
 
@@ -270,10 +281,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                 switch (_stage)
                 {
                     case DrawLineStage.SelectStart:
-                        坐标信息?.SwitchFocus();
+                        坐标控件?.SwitchFocus();
                         break;
                     case DrawLineStage.SelectNext:
-                        直线信息?.SwitchFocus();
+                        直线信息控件?.SwitchFocus();
                         break;
                 }
             }
@@ -285,9 +296,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     case DrawLineStage.SelectStart:
                         {
                             // 设置起点并卸载控件
-                            工具图层.WorldStart = 坐标信息.Point;
+                            工具图层.WorldStart = 坐标控件.Point;
                             _host.UnloadControl(PopupType.PointPopup);
-                            坐标信息 = null;
+                            坐标控件 = null;
                             // 进入选择下一点阶段
                             _stage = DrawLineStage.SelectNext;
                             // 更新直线
@@ -308,12 +319,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         private void SelectNext()
         {
             // 直线信息控件为空，则加载直线信息控件
-            if (直线信息 == null)
+            if (直线信息控件 == null)
             {
-                直线信息 = (LineInfoPopup?)_host.LoadControl(PopupType.DrawLineInfo, new Point());
+                直线信息控件 = (LineInfoPopup?)_host.LoadControl(PopupType.DrawLineInfo, new Point());
                 Size size = _host.GetLayerSize();
                 _host.SetControlSize(size.Width, size.Height);
-                直线信息.Loaded += (s, e) => 直线信息.InitFocus();
+                直线信息控件.Loaded += (s, e) => 直线信息控件.InitFocus();
             }
 
             // 设置世界终点
@@ -327,13 +338,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             // 更新直线信息
             工具图层.UpdateLineInfo();
             // 设置直线信息控件的原长度与原角度
-            直线信息.原长度 = 工具图层.原物理长度;
-            直线信息.原角度 = 工具图层.原周角;
+            直线信息控件.原长度 = 工具图层.原物理长度;
+            直线信息控件.原角度 = 工具图层.原周角;
 
             // 获取已锁定的长度
-            工具图层.当前物理长度 = 直线信息.锁定长度;
+            工具图层.当前物理长度 = 直线信息控件.锁定长度;
             // 如果角度已锁定，则使用已锁定的角度
-            if (直线信息.AngleLocked) 工具图层.当前周角 = 直线信息.锁定角度;
+            if (直线信息控件.AngleLocked) 工具图层.当前周角 = 直线信息控件.锁定角度;
             // 否则，使用极轴追踪的角度
             else
             {
@@ -346,7 +357,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     double angle = 极轴追踪图层.UpdateTrackingAngle(工具图层.WorldStart.Value, 工具图层.WorldEnd.Value);
                     极轴追踪图层.Update();
                     工具图层.当前周角 = angle;
-                    直线信息.原角度 = angle;
+                    直线信息控件.原角度 = angle;
                     // 如果吸附至极轴，则计算极轴与附近曲线的交点，并将终点吸附至交点
                     if (极轴追踪图层.Snapped)
                     {
@@ -358,8 +369,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                             // 更新直线信息
                             工具图层.UpdateLineInfo();
                             // 设置直线信息控件的原长度与原角度
-                            直线信息.原长度 = 工具图层.原物理长度;
-                            直线信息.原角度 = 工具图层.原周角;
+                            直线信息控件.原长度 = 工具图层.原物理长度;
+                            直线信息控件.原角度 = 工具图层.原周角;
                         }
                     }
                 }
@@ -373,7 +384,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             // 更新直线
             工具图层.Update();
             // 更新直线信息控件
-            直线信息.UpdateLineInfo(工具图层.LineCenter, 工具图层.ArcCenter);
+            直线信息控件.UpdateLineInfo(工具图层.LinearMid, 工具图层.ArcMid);
         }
 
         /// <summary>
@@ -392,12 +403,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         private DrawLineStage _stage = DrawLineStage.SelectStart;
 
-        private GridLayer? 网格图层 = null;
-        private LineToolLayer? 工具图层 = null;
-        private PolarTrackingLayer? 极轴追踪图层 = null;
+        private GridLayer 网格图层;
+        private LineToolLayer 工具图层;
+        private PolarTrackingLayer 极轴追踪图层;
+        private SnapMarkLayer 捕捉标记图层;
         private CursorLayer 光标图层;
-        private PointPopup? 坐标信息 = null;
-        private LineInfoPopup? 直线信息 = null;
+
+        private PointPopup? 坐标控件 = null;
+        private LineInfoPopup? 直线信息控件 = null;
 
         #endregion
     }

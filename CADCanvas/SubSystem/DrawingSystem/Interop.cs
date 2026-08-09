@@ -19,4 +19,16 @@ namespace CADCanvas.SubSystem.DrawingSystem
         [DllImport("OCCTBridge.dll")]
         public static extern IntPtr CreateLineSegment(double x1, double y1, double x2, double y2);
     }
+
+    /// <summary>
+    /// 圆形互操作接口
+    /// </summary>
+    public class CircleInterop
+    {
+        /// <summary>
+        /// 创建圆形
+        /// </summary>
+        [DllImport("OCCTBridge.dll")]
+        public static extern IntPtr CreateCircle(double centerX, double centerY, double radius);
+    }
 }

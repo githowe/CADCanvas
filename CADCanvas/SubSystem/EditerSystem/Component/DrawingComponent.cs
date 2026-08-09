@@ -47,6 +47,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         private void Tool_Circle_Click()
         {
+            GetComponent<ToolComponent>().SwitchTool(GetComponent<ToolComponent>().CircleTool);
         }
 
         #endregion

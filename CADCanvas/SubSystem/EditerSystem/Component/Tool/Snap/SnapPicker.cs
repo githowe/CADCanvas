@@ -74,6 +74,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap
         private static List<Point> GetIntersection(List<GeoVisual> visualList)
         {
             List<Point> result = new List<Point>();
+            if (visualList.Count < 2) return result;
             for (int index1 = 0; index1 < visualList.Count; index1++)
             {
                 for (int index2 = index1 + 1; index2 < visualList.Count; index2++)

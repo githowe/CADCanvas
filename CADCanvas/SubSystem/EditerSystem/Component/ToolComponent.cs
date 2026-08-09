@@ -1,6 +1,7 @@
 ﻿using CADCanvas.SubSystem.DebugSystem;
 using CADCanvas.SubSystem.DrawingSystem;
 using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
+using CADCanvas.SubSystem.EditerSystem.Layer;
 using CADCanvas.SubSystem.EditerSystem.Tool;
 using CADCanvas.SubSystem.ResourceSystem;
 using System.Windows;
@@ -20,12 +21,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public DrawLineTool DrawLineTool => _drawLineTool;
 
+        public CircleTool CircleTool => _circleTool;
+
         #endregion
 
         #region 公开方法
 
         public void SwitchTool(CanvasToolBase tool)
         {
+            if (_currentTool == tool) return;
+
             _currentTool?.Clear();
             _currentTool = tool;
             _layerComponent!.CursorLayer.SwitchCursor(tool.CursorImage!);
@@ -285,7 +290,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 获取起点与终点
             Point start = _layerComponent!.GetLineToolWorldStart();
             Point end = _layerComponent.GetLineToolWorldEnd();
-            // 两点相同则不创建直线段
+            // 两点相同则不创建
             if (start == end) return;
 
             DebugInfoManager.Instance.UpdateInfo("添加直线起点", start.ToPointString("G17"));
@@ -307,6 +312,34 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         #endregion
 
+        #region 圆形工具方法
+
+        /// <summary>
+        /// 设置半径终点
+        /// </summary>
+        public void CircleTool_SetRadiusEnd()
+        {
+            // 获取圆形工具图层
+            CircleToolLayer layer = _layerComponent!.CircleToolLayer;
+            // 获取圆心与半径终点
+            Point start = layer.WorldStart!.Value;
+            Point end = layer.WorldEnd!.Value;
+            // 两点相同则不创建
+            if (start == end) return;
+
+            VisualCircle circle = GeoCreator.Instance.CreateCircle(start.X, start.Y, layer.当前物理半径);
+            _layerComponent.AddGraphic(circle);
+            _layerComponent.UpdateGraphic();
+
+            layer.WorldStart = null;
+            layer.WorldEnd = null;
+            layer.Clear();
+
+            GetComponent<SceneComponent>().AddVisual(circle);
+        }
+
+        #endregion
+
         #region 生命周期
 
         protected override void Init()
@@ -315,6 +348,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _selectTool = new SelectTool(this);
             _drawLineTool = new DrawLineTool(this);
             _drawLineTool.Finished = OnToolFinished;
+            _circleTool = new CircleTool(this);
+            _circleTool.Finished = OnToolFinished;
 
             _layerComponent = GetComponent<LayerComponent>();
         }
@@ -326,6 +361,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
             _selectTool.Enable();
             _drawLineTool.Enable();
+            _circleTool.Enable();
         }
 
         #endregion
@@ -343,6 +379,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         private SelectTool _selectTool;
         private DrawLineTool _drawLineTool;
+        private CircleTool _circleTool;
 
         private CanvasToolBase _currentTool;
 

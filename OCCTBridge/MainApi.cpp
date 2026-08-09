@@ -24,6 +24,13 @@ void* CreateLineSegment(double x1, double y1, double x2, double y2)
 	return wrapper;
 }
 
+void* CreateCircle(double centerX, double centerY, double radius)
+{
+	CircleWrapper* wrapper = new CircleWrapper();
+	wrapper->Circle = new Geom2d_Circle(gp_Ax2d(gp_Pnt2d(centerX, centerY), gp_Dir2d(1, 0)), radius);
+	return wrapper;
+}
+
 void SetLineSegmentStart(LineSegmentWrapper* wrapper, double x, double y)
 {
 	// ªÒ»°÷’µ„

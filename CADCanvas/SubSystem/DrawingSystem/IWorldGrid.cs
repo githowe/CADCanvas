@@ -13,5 +13,7 @@ namespace CADCanvas.SubSystem.DrawingSystem
         /// 屏幕坐标转世界坐标
         /// </summary>
         Point ToWorld(Point screen);
+
+        double ToScreenLength(double worldLength);
     }
 }

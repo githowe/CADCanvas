@@ -2,7 +2,6 @@
 using CADCanvas.SubSystem.EditerSystem.Component.Tool.RTree;
 using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
 using CADCanvas.SubSystem.EditerSystem.Layer;
-using System.Collections.Generic;
 using System.Windows;
 using XLogic.Base.UI;
 
@@ -68,7 +67,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         /// </summary>
         public void UpdateSnapPoint(Point mousePoint)
         {
-            Rect rect = new Rect(mousePoint.X - 16, mousePoint.Y - 16, 32, 32);
+            Rect rect = new Rect(mousePoint.X - 24, mousePoint.Y - 24, 48, 48);
             Point leftTop = GetComponent<LayerComponent>().GetWorldPoint(rect.TopLeft);
             Point rightBottom = GetComponent<LayerComponent>().GetWorldPoint(rect.BottomRight);
             Rect worldRect = new Rect(leftTop, rightBottom);
@@ -80,7 +79,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public List<SnapPoint> UpdateSnapPoint(List<SnapPoint> snapPointList, Point mousePoint)
         {
-            Rect rect = new Rect(mousePoint.X - 16, mousePoint.Y - 16, 32, 32);
+            Rect rect = new Rect(mousePoint.X - 24, mousePoint.Y - 24, 48, 48);
             Point leftTop = GetComponent<LayerComponent>().GetWorldPoint(rect.TopLeft);
             Point rightBottom = GetComponent<LayerComponent>().GetWorldPoint(rect.BottomRight);
             Rect worldRect = new Rect(leftTop, rightBottom);

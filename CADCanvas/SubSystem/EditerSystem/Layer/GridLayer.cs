@@ -115,6 +115,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// </summary>
         public Point ToScreen(Point worldPoint, bool round = false) => ToScreen(worldPoint.X, worldPoint.Y, round);
 
+        /// <summary>
+        /// 世界长度转屏幕长度
+        /// </summary>
+        public double ToScreenLength(double worldLength) => worldLength / _gridPhysicsSize * _gridPixelSize;
+
         #endregion
 
         #region 内部方法
@@ -280,8 +285,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         // 网格线
         private readonly Pen _normalLine = new(new SolidColorBrush(Color.FromArgb(255, 30, 30, 30)), 1);
         private readonly Pen _microLine = new(new SolidColorBrush(Color.FromArgb(255, 20, 20, 20)), 1);
-        private readonly Pen _centerLine = new(new SolidColorBrush(Color.FromArgb(255, 103, 43, 45)), 1);
-        private readonly Pen _centerList = new(new SolidColorBrush(Color.FromArgb(255, 42, 104, 45)), 1);
+        private readonly Pen _centerLine = new(new SolidColorBrush(Color.FromArgb(255, 68, 32, 33)), 1);
+        private readonly Pen _centerList = new(new SolidColorBrush(Color.FromArgb(255, 32, 69, 33)), 1);
         // 当前画笔
         private Pen? _currentPen;
 
@@ -295,11 +300,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         private readonly int _gridIncrementSize = 10;
 
         /// <summary>绘图起始点</summary>
-        private Point _drawStart = new();
+        private Point _drawStart = new Point();
         /// <summary>中心偏移</summary>
-        private Point _centerOffset = new();
+        private Point _centerOffset = new Point();
         /// <summary>临时偏移</summary>
-        private Point _moveOffset = new();
+        private Point _moveOffset = new Point();
 
         #endregion
 

@@ -1,10 +1,8 @@
 ﻿using CADCanvas.SubSystem.DebugSystem;
-using CADCanvas.SubSystem.DrawingSystem;
 using System.Windows;
 using System.Windows.Media;
 using XLogic.Wpf;
 using XLogic.Wpf.Drawing;
-using XLogic.Wpf.Ex;
 
 namespace CADCanvas.SubSystem.EditerSystem.Layer
 {
