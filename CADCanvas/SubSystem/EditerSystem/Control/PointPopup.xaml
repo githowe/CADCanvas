@@ -14,14 +14,14 @@
             <Border Background="#2b2b2b" BorderThickness="1" BorderBrush="#464646" Margin="10,0,0,0">
                 <Label Foreground="White" Content="X" Padding="0" VerticalAlignment="Center" FontSize="12" Margin="6,0"/>
             </Border>
-            <Grid Margin="-1,0,0,0" Width="80">
+            <Grid Margin="-1,0,0,0" Width="100">
                 <TextBox x:Name="Input_x"/>
                 <Image x:Name="Lock_x" Source="Image/Lock.png" Width="11" Height="11" HorizontalAlignment="Right" Margin="0,0,6,0" Visibility="Collapsed"/>
             </Grid>
             <Border Background="#2b2b2b" BorderThickness="1" BorderBrush="#464646" Margin="10,0,0,0">
                 <Label Foreground="White" Content="Y" Padding="0" VerticalAlignment="Center" FontSize="12" Margin="6,0"/>
             </Border>
-            <Grid Margin="-1,0,0,0" Width="80">
+            <Grid Margin="-1,0,0,0" Width="100">
                 <TextBox x:Name="Input_y"/>
                 <Image x:Name="Lock_y" Source="Image/Lock.png" Width="11" Height="11" HorizontalAlignment="Right" Margin="0,0,6,0" Visibility="Collapsed"/>
             </Grid>

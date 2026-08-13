@@ -15,10 +15,26 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public abstract Rect Bounds { get; }
 
+        public bool Hidden { get; set; } = false;
+
+        public double Opacity { get; set; } = 1.0;
+
+        public Color LineColor { get; set; } = Colors.White;
+
+        public double LineWidth { get; set; } = 1.0;
+
         public virtual void Init() { }
 
         public abstract void Draw(DrawingContext dc, IWorldGrid grid);
 
+        /// <summary>
+        /// 获取捕捉点列表
+        /// </summary>
         public abstract List<SnapPoint> GetSnapPointList();
+
+        /// <summary>
+        /// 根据交点列表分割曲线，生成新的曲线对象
+        /// </summary>
+        public abstract List<GeoVisual> SplitByIntersectionPoint(List<Point> pointList);
     }
 }

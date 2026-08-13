@@ -25,6 +25,7 @@ namespace CADCanvas
             ImageManager.Instance.Init();
             TimerEngine.Instance.Start();
             GeoTool.Instance.Init();
+            BrushManager.Instance.Init();
         }
 
         private void App_Exit(object sender, ExitEventArgs e)

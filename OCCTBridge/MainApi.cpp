@@ -115,3 +115,38 @@ int GetIntersectionWithRay(CurveWrapper* curve, double x, double y, double dx, d
 	// 返回交点数量
 	return pointCount;
 }
+
+int IsIntersection(CurveWrapper* curve1, CurveWrapper* curve2)
+{
+	Geom2dAPI_InterCurveCurve intersector(curve1->GetCurve(), curve2->GetCurve());
+	int pointCount = intersector.NbPoints();
+	return pointCount > 0 ? 1 : 0;
+}
+
+int IsIntersectionWithRect(CurveWrapper* curve, double left, double top, double right, double bottom)
+{
+	int pointCount = 0;
+
+	// 是否与上边相交
+	Handle(Geom2d_TrimmedCurve) topEdge = GC_MakeSegment2d(gp_Pnt2d(left, top), gp_Pnt2d(right, top));
+	Geom2dAPI_InterCurveCurve intersector(curve->GetCurve(), topEdge);
+	pointCount = intersector.NbPoints();
+	if (pointCount > 0) return 1;
+	// 是否与右边相交
+	Handle(Geom2d_TrimmedCurve) rightEdge = GC_MakeSegment2d(gp_Pnt2d(right, top), gp_Pnt2d(right, bottom));
+	intersector.Init(curve->GetCurve(), rightEdge);
+	pointCount = intersector.NbPoints();
+	if (pointCount > 0) return 1;
+	// 是否与底边相交
+	Handle(Geom2d_TrimmedCurve) bottomEdge = GC_MakeSegment2d(gp_Pnt2d(right, bottom), gp_Pnt2d(left, bottom));
+	intersector.Init(curve->GetCurve(), bottomEdge);
+	pointCount = intersector.NbPoints();
+	if (pointCount > 0) return 1;
+	// 是否与左边相交
+	Handle(Geom2d_TrimmedCurve) leftEdge = GC_MakeSegment2d(gp_Pnt2d(left, bottom), gp_Pnt2d(left, top));
+	intersector.Init(curve->GetCurve(), leftEdge);
+	pointCount = intersector.NbPoints();
+	if (pointCount > 0) return 1;
+
+	return 0;
+}

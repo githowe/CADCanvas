@@ -22,6 +22,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public CircleToolLayer CircleToolLayer => 圆形工具图层;
 
+        public TrimToolLayer TrimToolLayer => 修剪工具图层;
+
         public RTreeViewLayer RTreeViewLayer => 空间索引可视化图层;
 
         public PolarTrackingLayer PolarTrackingLayer => 极轴追踪图层;
@@ -161,6 +163,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             圆形工具图层 = new CircleToolLayer { Grid = 网格图层 };
             _host.LayerBox.Children.Add(圆形工具图层);
             _layerList.Add(圆形工具图层);
+            修剪工具图层 = new TrimToolLayer { Grid = 网格图层 };
+            _host.LayerBox.Children.Add(修剪工具图层);
+            _layerList.Add(修剪工具图层);
             // 添加可视化图层
             空间索引可视化图层 = new RTreeViewLayer { Grid = 网格图层 };
             _host.Layer_RTree.Children.Add(空间索引可视化图层);
@@ -209,6 +214,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         private LineToolLayer? 直线工具图层;
         /// <summary>圆形工具</summary>
         private CircleToolLayer? 圆形工具图层;
+        /// <summary>修剪工具</summary>
+        private TrimToolLayer? 修剪工具图层;
 
         #endregion
 

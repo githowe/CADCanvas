@@ -46,3 +46,13 @@ dll_export int GetIntersection(CurveWrapper* curve1, CurveWrapper* curve2);
 /// 获取曲线与射线的交点
 /// </summary>
 dll_export int GetIntersectionWithRay(CurveWrapper* curve, double x, double y, double dx, double dy);
+
+/// <summary>
+/// 判断两个曲线是否相交
+/// </summary>
+dll_export int IsIntersection(CurveWrapper* curve1, CurveWrapper* curve2);
+
+/// <summary>
+/// 判断曲线是否与矩形相交
+/// </summary>
+dll_export int IsIntersectionWithRect(CurveWrapper* curve, double left, double top, double right, double bottom);

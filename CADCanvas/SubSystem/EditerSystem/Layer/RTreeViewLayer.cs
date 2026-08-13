@@ -39,7 +39,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         protected override void OnUpdate()
         {
             // DrawBounds();
-            DrawHovered();
+            // DrawHovered();
         }
 
         private void CreatePen(byte r, byte g, byte b)

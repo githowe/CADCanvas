@@ -120,6 +120,13 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
         /// </summary>
         public double ToScreenLength(double worldLength) => worldLength / _gridPhysicsSize * _gridPixelSize;
 
+        public Rect ToWorld(Rect screenRect)
+        {
+            Point leftTop = ToWorld(screenRect.TopLeft);
+            Point rightBottom = ToWorld(screenRect.BottomRight);
+            return new Rect(leftTop, rightBottom);
+        }
+
         #endregion
 
         #region 内部方法
@@ -207,8 +214,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
             ResizeLevel oldResizeLevel = ResizeLevel;
             ResizeLevel newResizeLevel = ResizeLevel + resizeIncrement;
             // 网格物理大小
-            double oldPhysicSize = Math.Pow(5, oldResizeLevel.MainLevelMax - oldResizeLevel.MainLevel);
-            double newPhysicSize = Math.Pow(5, newResizeLevel.MainLevelMax - newResizeLevel.MainLevel);
+            double oldPhysicSize = 1000 * Math.Pow(5, oldResizeLevel.MainLevelMax - oldResizeLevel.MainLevel);
+            double newPhysicSize = 1000 * Math.Pow(5, newResizeLevel.MainLevelMax - newResizeLevel.MainLevel);
             // 单像素物理长度
             double oldPixelLength = oldPhysicSize / CalculateGridSize(oldResizeLevel);
             double newPixelLength = newPhysicSize / CalculateGridSize(newResizeLevel);
@@ -312,8 +319,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Layer
 
         /// <summary>网格像素大小</summary>
         private int _gridPixelSize;
-        /// <summary>网格物理大小</summary>
-        private int _gridPhysicsSize = 1;
+        /// <summary>网格物理大小。单位：毫米</summary>
+        private int _gridPhysicsSize = 1000;
 
         #endregion
     }

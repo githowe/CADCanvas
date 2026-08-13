@@ -12,11 +12,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
     /// </summary>
     public class SceneComponent : Component<Editer>
     {
+        #region 属性
+
         public List<GeoVisual> AllVisual => _visualList;
+
+        public List<GeoVisual> HoveredVisualBounds => _hoveredBoundsList;
 
         public List<GeoVisual> HoveredVisual => _hoveredList;
 
         public List<SnapPoint> SnapPointList { get; set; } = new List<SnapPoint>();
+
+        #endregion
+
+        #region 公开方法
 
         public void AddVisual(GeoVisual visual)
         {
@@ -49,17 +57,33 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _rtViewLayer.Update();
         }
 
+        /// <summary>
+        /// 更新命中包围盒。用于粗筛鼠标附近的图形对象
+        /// </summary>
         public void UpdateHitedBounds(Rect rect)
         {
             IReadOnlyList<IBox> boundsList = _tree.Find(rect);
-            _hoveredList.Clear();
+            _hoveredBoundsList.Clear();
             _rtViewLayer.HoveredList.Clear();
             foreach (var item in boundsList)
             {
-                _hoveredList.Add((GeoVisual)item);
+                _hoveredBoundsList.Add((GeoVisual)item);
                 _rtViewLayer.HoveredList.Add(item.Bounds);
             }
             _rtViewLayer.Update();
+        }
+
+        /// <summary>
+        /// 更新命中对象。从命中包围盒中精筛鼠标附近的图形对象
+        /// </summary>
+        public void UpdateHitedVisual(Rect rect)
+        {
+            _hoveredList.Clear();
+            foreach (var item in _hoveredBoundsList)
+            {
+                if (GeoTool.Instance.IsIntersection(item, rect))
+                    _hoveredList.Add(item);
+            }
         }
 
         /// <summary>
@@ -72,7 +96,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             Point rightBottom = GetComponent<LayerComponent>().GetWorldPoint(rect.BottomRight);
             Rect worldRect = new Rect(leftTop, rightBottom);
 
-            SnapPointList = SnapPicker.PickSnapPoint(_hoveredList, worldRect);
+            SnapPointList = SnapPicker.PickSnapPoint(_hoveredBoundsList, worldRect);
             _snapMarkLayer.SnapPointList = SnapPointList;
             _snapMarkLayer.Update();
         }
@@ -90,6 +114,28 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             return result;
         }
 
+        /// <summary>
+        /// 获取与指定对象相交的对象列表
+        /// </summary>
+        public List<GeoVisual> GetintersectVisual(GeoVisual visual)
+        {
+            List<GeoVisual> result = new List<GeoVisual>();
+            // 查找包围盒相交的可视对象
+            IReadOnlyList<IBox> boundsList = _tree.Find(visual.Bounds);
+            // 精筛相交的可视对象
+            foreach (GeoVisual item in boundsList)
+            {
+                // 跳过自身
+                if (item == visual) continue;
+                // 判断是否相交
+                if (GeoTool.Instance.IsIntersection(item, visual))
+                    result.Add(item);
+            }
+            return result;
+        }
+
+        #endregion
+
         #region 生命周期
 
         protected override void Enable()
@@ -106,14 +152,20 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         #endregion
 
+        #region 字段
+
         /// <summary>可视对象列表</summary>
         private readonly List<GeoVisual> _visualList = new List<GeoVisual>();
-
+        /// <summary>悬停包围盒列表</summary>
+        private readonly List<GeoVisual> _hoveredBoundsList = new List<GeoVisual>();
+        /// <summary>悬停对象列表</summary>
         private readonly List<GeoVisual> _hoveredList = new List<GeoVisual>();
 
         private readonly RTree _tree = new RTree();
 
         private RTreeViewLayer _rtViewLayer;
         private SnapMarkLayer _snapMarkLayer;
+
+        #endregion
     }
 }

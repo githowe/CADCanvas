@@ -20,6 +20,8 @@ namespace CADCanvas.SubSystem.ResourceSystem
 
         public BitmapImage Cursor_Draw { get; private set; }
 
+        public BitmapImage Cursor_Trim { get; private set; }
+
         #endregion
 
         #region 接口实现
@@ -81,6 +83,8 @@ namespace CADCanvas.SubSystem.ResourceSystem
             Cursor_Move.Freeze();
             Cursor_Draw = GetAssetsImage("Image/Cursor/Draw.png")!;
             Cursor_Draw.Freeze();
+            Cursor_Trim = GetAssetsImage("Image/Cursor/Trim.png")!;
+            Cursor_Trim.Freeze();
         }
 
         #endregion

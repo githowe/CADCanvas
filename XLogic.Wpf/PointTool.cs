@@ -79,5 +79,20 @@ namespace XLogic.Wpf
         /// 获取两点之间的中点
         /// </summary>
         public static Point GetMidPoint(Point start, Point end) => new Point((start.X + end.X) / 2, (start.Y + end.Y) / 2);
+
+        /// <summary>
+        /// 创建矩形区域
+        /// </summary>
+        public static Rect CreateRect(Point center, double size) => CreateRect(center, size, size);
+
+        /// <summary>
+        /// 创建矩形区域
+        /// </summary>
+        public static Rect CreateRect(Point center, double width, double height)
+        {
+            double left = center.X - width / 2;
+            double top = center.Y - height / 2;
+            return new Rect(left, top, width, height);
+        }
     }
 }

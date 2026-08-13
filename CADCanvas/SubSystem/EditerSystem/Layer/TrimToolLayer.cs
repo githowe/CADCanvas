@@ -4,18 +4,13 @@ using XLogic.Wpf.Drawing;
 namespace CADCanvas.SubSystem.EditerSystem.Layer
 {
     /// <summary>
-    /// 图形图层：绘制图形的图层
+    /// 修剪工具图层
     /// </summary>
-    public class GraphicLayer : DrawingLayer
+    public class TrimToolLayer : DrawingLayer
     {
-        public IWorldGrid Grid { get; set; }
+        public GridLayer? Grid { get; set; } = null;
 
         public List<GeoVisual> GeoVisualList { get; set; } = new List<GeoVisual>();
-
-        public override void Init()
-        {
-            IsHitTestVisible = false;
-        }
 
         protected override void OnUpdate()
         {

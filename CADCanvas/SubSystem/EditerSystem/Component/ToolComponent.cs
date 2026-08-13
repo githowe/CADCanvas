@@ -23,6 +23,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public CircleTool CircleTool => _circleTool;
 
+        public TrimTool TrimTool => _trimTool;
+
         #endregion
 
         #region 公开方法
@@ -145,7 +147,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 创建捕捉点列表
             List<SnapPoint> snapPointList = new List<SnapPoint>();
             // 遍历命中图形，获取与极轴的交点
-            foreach (GeoVisual visual in scene.HoveredVisual)
+            foreach (GeoVisual visual in scene.HoveredVisualBounds)
             {
                 List<Point> intersectionPoints = GeoTool.Instance.GetIntersection(visual, worldStart, angle);
                 foreach (Point intersection in intersectionPoints)
@@ -350,18 +352,21 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _drawLineTool.Finished = OnToolFinished;
             _circleTool = new CircleTool(this);
             _circleTool.Finished = OnToolFinished;
+            _trimTool = new TrimTool(this);
+
+            _toolList.Add(_selectTool);
+            _toolList.Add(_drawLineTool);
+            _toolList.Add(_circleTool);
+            _toolList.Add(_trimTool);
 
             _layerComponent = GetComponent<LayerComponent>();
         }
 
         protected override void Enable()
         {
+            foreach (var item in _toolList) item.Enable();
             // 初始化当前工具为选择工具
             SwitchTool(_selectTool);
-
-            _selectTool.Enable();
-            _drawLineTool.Enable();
-            _circleTool.Enable();
         }
 
         #endregion
@@ -377,9 +382,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         #region 字段
 
+        private List<CanvasToolBase> _toolList = new List<CanvasToolBase>();
         private SelectTool _selectTool;
         private DrawLineTool _drawLineTool;
         private CircleTool _circleTool;
+        private TrimTool _trimTool;
 
         private CanvasToolBase _currentTool;
 

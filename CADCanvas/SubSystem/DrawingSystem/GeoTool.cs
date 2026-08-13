@@ -45,6 +45,18 @@ namespace CADCanvas.SubSystem.DrawingSystem
         [DllImport("OCCTBridge.dll")]
         private static extern int GetIntersectionWithRay(IntPtr curve, double x, double y, double dx, double dy);
 
+        /// <summary>
+        /// 判断曲线与曲线是否相交
+        /// </summary>
+        [DllImport("OCCTBridge.dll")]
+        private static extern bool IsIntersection(IntPtr curve1, IntPtr curve2);
+
+        /// <summary>
+        /// 判断曲线是否与矩形相交
+        /// </summary>
+        [DllImport("OCCTBridge.dll")]
+        private static extern bool IsIntersectionWithRect(IntPtr curve, double left, double top, double right, double bottom);
+
         #endregion
 
         #region 生命周期
@@ -107,6 +119,22 @@ namespace CADCanvas.SubSystem.DrawingSystem
             }
             // 返回结果
             return result;
+        }
+
+        /// <summary>
+        /// 判断几何图形是否与矩形相交
+        /// </summary>
+        public bool IsIntersection(GeoVisual visual, Rect rect)
+        {
+            return IsIntersectionWithRect(visual.Handle, rect.Left, rect.Top, rect.Right, rect.Bottom);
+        }
+
+        /// <summary>
+        /// 判断两个几何图形是否相交
+        /// </summary>
+        public bool IsIntersection(GeoVisual visual1, GeoVisual visual2)
+        {
+            return IsIntersection(visual1.Handle, visual2.Handle);
         }
 
         #endregion

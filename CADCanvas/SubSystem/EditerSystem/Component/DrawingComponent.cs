@@ -33,6 +33,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
                 case "Tool_Circle":
                     Tool_Circle_Click();
                     break;
+                case "Tool_Trim":
+                    Tool_Trim_Click();
+                    break;
             }
         }
 
@@ -48,6 +51,11 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         private void Tool_Circle_Click()
         {
             GetComponent<ToolComponent>().SwitchTool(GetComponent<ToolComponent>().CircleTool);
+        }
+
+        private void Tool_Trim_Click()
+        {
+            GetComponent<ToolComponent>().SwitchTool(GetComponent<ToolComponent>().TrimTool);
         }
 
         #endregion
