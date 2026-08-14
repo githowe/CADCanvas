@@ -42,6 +42,11 @@ namespace CADCanvas.SubSystem.DrawingSystem
             return new List<GeoVisual>();
         }
 
+        public override List<GeoVisual> JointSplitVisual(List<GeoVisual> visualList)
+        {
+            return new List<GeoVisual>();
+        }
+
         private Pen? _pen = null;
     }
 }

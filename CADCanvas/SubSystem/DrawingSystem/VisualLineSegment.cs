@@ -76,7 +76,7 @@ namespace CADCanvas.SubSystem.DrawingSystem
             // 添加终点，然后按 t 排序分割点列表
             splitPointList.Add(new SegmentPoint(1.0, End));
             splitPointList.Sort((a, b) => a.T.CompareTo(b.T));
-            
+
             // 去重分割点列表
             List<SegmentPoint> uniquePointList = new List<SegmentPoint>();
             foreach (SegmentPoint item in splitPointList)
@@ -108,7 +108,7 @@ namespace CADCanvas.SubSystem.DrawingSystem
                     Handle = LineInterop.CreateLineSegment(start.X, start.Y, end.X, end.Y),
                     Start = start,
                     End = end,
-                    LineColor = BrushManager.Instance.GetColor(),
+                    // LineColor = BrushManager.Instance.GetColor(),
                     LineWidth = LineWidth
                 };
                 segment.Init();
@@ -118,6 +118,62 @@ namespace CADCanvas.SubSystem.DrawingSystem
             BrushManager.Instance.ResetIndex();
 
             // 返回结果
+            return result;
+        }
+
+        public override List<GeoVisual> JointSplitVisual(List<GeoVisual> visualList)
+        {
+            List<GeoVisual> result = new List<GeoVisual>();
+
+            // 无分割片段，返回空
+            if (visualList.Count == 0) return result;
+            // 有一个分割片段，直接返回
+            if (visualList.Count == 1)
+            {
+                VisualLineSegment visual = visualList[0] as VisualLineSegment;
+                VisualLineSegment segment = new VisualLineSegment
+                {
+                    Handle = LineInterop.CreateLineSegment(visual.Start.X, visual.Start.Y, visual.End.X, visual.End.Y),
+                    Start = visual.Start,
+                    End = visual.End,
+                };
+                segment.Init();
+                result.Add(segment);
+                return result;
+            }
+
+            // 拼接片段
+            VisualLineSegment firstVisual = visualList[0] as VisualLineSegment;
+            VisualLineSegment current = new VisualLineSegment
+            {
+                Start = firstVisual.Start,
+                End = firstVisual.End,
+            };
+            for (int index = 1; index < visualList.Count; index++)
+            {
+                // 获取当前片段
+                VisualLineSegment currentVisual = visualList[index] as VisualLineSegment;
+                // 如果首尾相连，更新当前线段终点
+                if (currentVisual.Start == current.End)
+                    current.End = currentVisual.End;
+                // 否则，将当前线段加入结果，并开始新的线段
+                else
+                {
+                    current.Handle = LineInterop.CreateLineSegment(current.Start.X, current.Start.Y, current.End.X, current.End.Y);
+                    current.Init();
+                    result.Add(current);
+                    current = new VisualLineSegment
+                    {
+                        Start = currentVisual.Start,
+                        End = currentVisual.End,
+                    };
+                }
+            }
+            // 添加最后一个线段
+            current.Handle = LineInterop.CreateLineSegment(current.Start.X, current.Start.Y, current.End.X, current.End.Y);
+            current.Init();
+            result.Add(current);
+
             return result;
         }
 

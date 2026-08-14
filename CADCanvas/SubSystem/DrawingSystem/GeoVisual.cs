@@ -36,5 +36,10 @@ namespace CADCanvas.SubSystem.DrawingSystem
         /// 根据交点列表分割曲线，生成新的曲线对象
         /// </summary>
         public abstract List<GeoVisual> SplitByIntersectionPoint(List<Point> pointList);
+
+        /// <summary>
+        /// 拼接分割图形
+        /// </summary>
+        public abstract List<GeoVisual> JointSplitVisual(List<GeoVisual> visualList);
     }
 }

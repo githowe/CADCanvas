@@ -46,6 +46,11 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public override List<GeoVisual> SplitByIntersectionPoint(List<Point> pointList) => new List<GeoVisual>();
 
+        public override List<GeoVisual> JointSplitVisual(List<GeoVisual> visualList)
+        {
+            return new List<GeoVisual>();
+        }
+
         private Pen? _pen = null;
     }
 }

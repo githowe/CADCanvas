@@ -1,9 +1,16 @@
-﻿using XLogic.Base.UI;
+﻿using CADCanvas.SubSystem.EditerSystem.Component.Tool;
+using XLogic.Base.UI;
 
 namespace CADCanvas.SubSystem.EditerSystem.Component
 {
     public class EditerComponent : Component<Editer>
     {
+        #region 属性
+
+        public EditOption EditOption { get; set; } = new EditOption();
+
+        #endregion
+
         #region 公开方法
 
         public void LoadDocument()

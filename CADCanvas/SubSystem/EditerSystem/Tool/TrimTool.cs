@@ -4,7 +4,6 @@ using CADCanvas.SubSystem.EditerSystem.Component;
 using CADCanvas.SubSystem.EditerSystem.Component.Tool;
 using CADCanvas.SubSystem.EditerSystem.Layer;
 using CADCanvas.SubSystem.ResourceSystem;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using XLogic.Wpf;
@@ -33,7 +32,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             鼠标离开();
             鼠标移动();
 
-            左键按下();
+            命中空白();
+            命中对象();
             中键按下();
 
             _handler.TreeRootKeyDown = HandleTreeRootKeyDown;
@@ -101,9 +101,30 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             Finish();
         }
 
-        private void 左键按下()
+        private void 命中空白()
         {
+            NewTree("命中空白", (_) =>
+            {
 
+            });
+            NewNode(Behaviors.LeftUp, (_) =>
+            {
+                ResetTree();
+            });
+            Finish();
+        }
+
+        private void 命中对象()
+        {
+            NewTree("命中对象", (_) =>
+            {
+                TrimHitedVisual();
+            });
+            NewNode(Behaviors.LeftUp, (_) =>
+            {
+                ResetTree();
+            });
+            Finish();
         }
 
         private void 中键按下()
@@ -114,6 +135,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         #endregion
 
         #region 工具事件
+
+        public override void OnLeftButtonDown(BehaviorArgs? args = null)
+        {
+            if (工具图层.GeoVisualList.Count == 0) Invoke("命中空白");
+            else Invoke("命中对象");
+        }
 
         public override void OnKeyDown(KeyEventArgs e)
         {
@@ -132,16 +159,47 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         private void OnHitedAdd(List<GeoVisual> list)
         {
-            foreach (var item in list) item.Hidden = true;
+            // 遍历新赠命中对象
+            foreach (var visual in list)
+            {
+                visual.Hidden = true;
+                // 获取与命中对象相交的对象
+                List<GeoVisual> intersectList = _scene.GetintersectVisual(visual);
+                // 获取全部与命中对象相交的交点
+                List<Point> allIntersectPoint = new List<Point>();
+                foreach (var intersectItem in intersectList)
+                {
+                    List<Point> intersectPoints = GeoTool.Instance.GetIntersection(visual, intersectItem);
+                    allIntersectPoint.AddRange(intersectPoints);
+                }
+                // 生成按交点分割后的图形对象
+                List<GeoVisual> split = visual.SplitByIntersectionPoint(allIntersectPoint);
+                _splitVisualCache.Add(visual, split);
+                工具图层.GeoVisualList.AddRange(split);
+            }
             图形图层.Update();
-            UpdateSplitVisual();
         }
 
         private void OnHitedRemove(List<GeoVisual> list)
         {
-            foreach (var item in list) item.Hidden = false;
+            foreach (var visual in list)
+            {
+                visual.Hidden = false;
+                // 释放分割对象
+                if (_splitVisualCache.TryGetValue(visual, out List<GeoVisual>? splitList))
+                {
+                    foreach (var splitItem in splitList)
+                    {
+                        // 释放句柄
+                        GeoTool.Instance.FreeCurve(splitItem);
+                        // 从工具图层中移除
+                        工具图层.GeoVisualList.Remove(splitItem);
+                    }
+                    // 清除缓存
+                    _splitVisualCache.Remove(visual);
+                }
+            }
             图形图层.Update();
-            UpdateSplitVisual();
         }
 
         /// <summary>
@@ -168,30 +226,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         }
 
         /// <summary>
-        /// 更新分割对象。分割对象是指命中对象从交点处分割后的对象
-        /// </summary>
-        private void UpdateSplitVisual()
-        {
-            // 遍历命中对象
-            List<GeoVisual> splitResult = new List<GeoVisual>();
-            foreach (var visual in _scene.HoveredVisual)
-            {
-                // 获取与命中对象相交的对象
-                List<GeoVisual> intersectList = _scene.GetintersectVisual(visual);
-                // 获取全部与命中对象相交的交点
-                List<Point> allIntersectPoint = new List<Point>();
-                foreach (var intersectItem in intersectList)
-                {
-                    List<Point> intersectPoints = GeoTool.Instance.GetIntersection(visual, intersectItem);
-                    allIntersectPoint.AddRange(intersectPoints);
-                }
-                // 生成按交点分割后的图形对象
-                splitResult.AddRange(visual.SplitByIntersectionPoint(allIntersectPoint));
-            }
-            工具图层.GeoVisualList = splitResult;
-        }
-
-        /// <summary>
         /// 更新修剪预览
         /// </summary>
         private void UpdateTrimPreview()
@@ -204,6 +238,51 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     item.Opacity = 1;
             }
             工具图层.Update();
+        }
+
+        /// <summary>
+        /// 修剪命中对象
+        /// </summary>
+        private void TrimHitedVisual()
+        {
+            // 遍历命中对象
+            foreach (var visual in _scene.HoveredVisual)
+            {
+                // 删除命中对象
+                图形图层.GeoVisualList.Remove(visual);
+                _scene.RemoveVisual(visual);
+                // 获取与对象关联的分割对象
+                List<GeoVisual> splitList = _splitVisualCache[visual];
+                // 删除工具图层中的命中部分
+                List<GeoVisual> 剩余部分 = RemoveHitedSplit(splitList);
+                // 拼接剩余部分
+                List<GeoVisual> 拼接结果 = visual.JointSplitVisual(剩余部分);
+                // 添加拼接后的对象
+                _scene.AddVisual(拼接结果);
+                图形图层.GeoVisualList.AddRange(拼接结果);
+                _splitVisualCache.Remove(visual);
+            }
+            // 清空工具图层中的分割对象
+            工具图层.GeoVisualList.Clear();
+            工具图层.Update();
+            // 更新图形图层
+            图形图层.Update();
+            // 更新命中对象
+            UpdateHitedVisual();
+        }
+
+        private List<GeoVisual> RemoveHitedSplit(List<GeoVisual> source)
+        {
+            List<GeoVisual> result = new List<GeoVisual>();
+
+            // 添加需要保留的部分
+            foreach (var item in source)
+                if (item.Opacity == 1) result.Add(item);
+            // 释放全部句柄
+            foreach (var item in source)
+                GeoTool.Instance.FreeCurve(item);
+
+            return result;
         }
 
         #endregion
@@ -220,6 +299,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         private Rect _rectForHitVisual = Rect.Empty;
 
         private readonly ListChangeTracker<GeoVisual> _hitedVisualTracker = new ListChangeTracker<GeoVisual>();
+        private readonly Dictionary<GeoVisual, List<GeoVisual>> _splitVisualCache = new Dictionary<GeoVisual, List<GeoVisual>>();
 
         #endregion
     }

@@ -1,9 +1,11 @@
 ﻿using CADCanvas.SubSystem.DrawingSystem;
+using CADCanvas.SubSystem.EditerSystem.Component.Tool;
 using CADCanvas.SubSystem.EditerSystem.Component.Tool.RTree;
 using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
 using CADCanvas.SubSystem.EditerSystem.Layer;
 using System.Windows;
 using XLogic.Base.UI;
+using XLogic.Wpf.Ex;
 
 namespace CADCanvas.SubSystem.EditerSystem.Component
 {
@@ -34,8 +36,18 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             UpdateBoundsLayerView();
         }
 
+        public void AddVisual(List<GeoVisual> visualList)
+        {
+            _visualList.AddRange(visualList);
+            foreach (var item in visualList)
+                _tree.Insert(item, item.Bounds);
+            _tree.UpdateBoundsLayer();
+            UpdateBoundsLayerView();
+        }
+
         public void RemoveVisual(GeoVisual visual)
         {
+            GeoTool.Instance.FreeCurve(visual);
             _visualList.Remove(visual);
             _tree.Clear();
             _tree.Build(_visualList.Cast<IBox>().ToList());
@@ -45,6 +57,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public void ClearVisual()
         {
+            foreach (var item in _visualList) GeoTool.Instance.FreeCurve(item);
             _visualList.Clear();
             _tree.Clear();
             _tree.UpdateBoundsLayer();
@@ -96,8 +109,39 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             Point rightBottom = GetComponent<LayerComponent>().GetWorldPoint(rect.BottomRight);
             Rect worldRect = new Rect(leftTop, rightBottom);
 
-            SnapPointList = SnapPicker.PickSnapPoint(_hoveredBoundsList, worldRect);
-            _snapMarkLayer.SnapPointList = SnapPointList;
+            List<SnapPoint> allSnap = SnapPicker.PickSnapPoint(_hoveredBoundsList, worldRect);
+            // 删除无需捕捉的点
+            List<SnapPoint> filterResult = new List<SnapPoint>();
+            SnapOption snapOption = GetComponent<EditerComponent>().EditOption.SnapOption;
+            foreach (var item in allSnap)
+            {
+                switch (item.Type)
+                {
+                    case SnapType.Endpoint:
+                        if (snapOption.Endpoint) filterResult.Add(item);
+                        break;
+                    case SnapType.Midpoint:
+                        if (snapOption.Midpoint) filterResult.Add(item);
+                        break;
+                    case SnapType.Center:
+                        if (snapOption.Center) filterResult.Add(item);
+                        break;
+                    case SnapType.Intersection:
+                        if (snapOption.Intersection) filterResult.Add(item);
+                        break;
+                    case SnapType.Tangent:
+                        if (snapOption.Tangent) filterResult.Add(item);
+                        break;
+                    case SnapType.Perpendicular:
+                        break;
+                    case SnapType.Parallel:
+                        break;
+                    case SnapType.Point:
+                        break;
+                }
+            }
+            SnapPointList = filterResult;
+            _snapMarkLayer.SnapPointList = filterResult;
             _snapMarkLayer.Update();
         }
 
@@ -121,7 +165,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         {
             List<GeoVisual> result = new List<GeoVisual>();
             // 查找包围盒相交的可视对象
-            IReadOnlyList<IBox> boundsList = _tree.Find(visual.Bounds);
+            IReadOnlyList<IBox> boundsList = _tree.Find(visual.Bounds.Extend(0.001));
             // 精筛相交的可视对象
             foreach (GeoVisual item in boundsList)
             {

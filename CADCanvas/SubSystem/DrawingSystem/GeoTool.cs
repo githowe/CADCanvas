@@ -28,6 +28,12 @@ namespace CADCanvas.SubSystem.DrawingSystem
         #region 互操作接口
 
         /// <summary>
+        /// 释放曲线
+        /// </summary>
+        [DllImport("OCCTBridge.dll")]
+        private static extern void FreeCurve(IntPtr curve);
+
+        /// <summary>
         /// 初始化二维点缓存。将C#层的数组的地址传递给C++，以在C++中读写该数组
         /// </summary>
         [DllImport("OCCTBridge.dll")]
@@ -77,6 +83,18 @@ namespace CADCanvas.SubSystem.DrawingSystem
         #endregion
 
         #region 公开方法
+
+        /// <summary>
+        /// 释放曲线
+        /// </summary>
+        public void FreeCurve(GeoVisual visual)
+        {
+            if (visual.Handle != IntPtr.Zero)
+            {
+                FreeCurve(visual.Handle);
+                visual.Handle = IntPtr.Zero;
+            }
+        }
 
         /// <summary>
         /// 获取两个几何图形的全部交点
