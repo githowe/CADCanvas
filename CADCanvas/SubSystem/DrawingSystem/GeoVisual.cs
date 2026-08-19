@@ -27,6 +27,10 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public abstract void Draw(DrawingContext dc, IWorldGrid grid);
 
+        public abstract void DrawHover(DrawingContext dc, IWorldGrid grid);
+
+        public abstract void DrawSelect(DrawingContext dc, IWorldGrid grid);
+
         /// <summary>
         /// 获取捕捉点列表
         /// </summary>

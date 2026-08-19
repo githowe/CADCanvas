@@ -69,8 +69,14 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public void OnMouseMove() { }
 
+        /// <summary>
+        /// 获取鼠标屏幕坐标
+        /// </summary>
         public Point GetMousePoint() => Mouse.GetPosition(_host.Layer_Mouse);
 
+        /// <summary>
+        /// 获取鼠标世界坐标
+        /// </summary>
         public Point GetWorldPoint() => _layerComponent!.GetWorldPoint();
 
         /// <summary>
@@ -251,6 +257,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             GetComponent<ControlComponent>().UnloadControl(popupType);
         }
 
+        public bool HoveredVisual() => GetComponent<SceneComponent>().HoveredVisual.Count > 0;
+
         #endregion
 
         #region 选择工具方法
@@ -270,6 +278,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             Rect worldRect = new Rect(leftTop, rightBottom);
             // 更新命中包围盒
             GetComponent<SceneComponent>().UpdateHitedBounds(worldRect);
+            // 更新精确悬停对象
+            rect = new Rect(mousePoint.X - 5, mousePoint.Y - 5, 10, 10);
+            GetComponent<SelectComponent>().UpdateHoveredVisual(_layerComponent.GetWorldRect(rect));
         }
 
         #endregion

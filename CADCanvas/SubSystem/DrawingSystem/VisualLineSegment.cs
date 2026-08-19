@@ -29,11 +29,26 @@ namespace CADCanvas.SubSystem.DrawingSystem
             _pen.StartLineCap = PenLineCap.Square;
             _pen.EndLineCap = PenLineCap.Square;
             _pen.Freeze();
+
+            _hoverPen = new Pen(new SolidColorBrush(Color.FromArgb(96, 255, 255, 255)), LineWidth + 4);
+            _hoverPen.StartLineCap = PenLineCap.Round;
+            _hoverPen.EndLineCap = PenLineCap.Round;
+            _hoverPen.Freeze();
         }
 
         public override void Draw(DrawingContext dc, IWorldGrid grid)
         {
             dc.DrawLine(_pen, grid.ToScreen(Start), grid.ToScreen(End));
+        }
+
+        public override void DrawHover(DrawingContext dc, IWorldGrid grid)
+        {
+            dc.DrawLine(_hoverPen, grid.ToScreen(Start), grid.ToScreen(End));
+        }
+
+        public override void DrawSelect(DrawingContext dc, IWorldGrid grid)
+        {
+            
         }
 
         public override List<SnapPoint> GetSnapPointList()
@@ -179,5 +194,6 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         private readonly record struct SegmentPoint(double T, Point Point);
         private Pen? _pen = null;
+        private Pen? _hoverPen = null;
     }
 }

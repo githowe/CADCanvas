@@ -1,10 +1,16 @@
 ﻿using CADCanvas.SubSystem.EditerSystem.Component.Tool.Snap;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using XLogic.Wpf.Drawing;
 
 namespace CADCanvas.SubSystem.DrawingSystem
 {
-    public class VisualCircle : GeoVisual
+    public class VisualArc : GeoVisual
     {
         #region 属性
 
@@ -12,7 +18,13 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public double Radius { get; set; } = 0;
 
-        public override Rect Bounds => new Rect(Center.X - Radius, Center.Y - Radius, Radius * 2, Radius * 2);
+        public double StartAngle { get; set; } = 0;
+
+        public double EndAngle { get; set; } = 0;
+
+        public RotateDirection Direction { get; set; } = RotateDirection.CounterClockwise;
+
+        public override Rect Bounds => Rect.Empty;
 
         #endregion
 
@@ -20,16 +32,12 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public override void Init()
         {
-            _pen = new Pen(new SolidColorBrush(LineColor), LineWidth);
-            _pen.StartLineCap = PenLineCap.Square;
-            _pen.EndLineCap = PenLineCap.Square;
-            _pen.Freeze();
+            
         }
 
         public override void Draw(DrawingContext dc, IWorldGrid grid)
         {
-            double screenRadius = grid.ToScreenLength(Radius);
-            dc.DrawEllipse(null, _pen, grid.ToScreen(Center), screenRadius, screenRadius);
+            
         }
 
         public override void DrawHover(DrawingContext dc, IWorldGrid grid)
@@ -44,15 +52,11 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public override List<SnapPoint> GetSnapPointList()
         {
-            List<SnapPoint> result = new List<SnapPoint>();
-            result.Add(new SnapPoint() { Type = SnapType.Center, WorldPoint = Center });
-            return result;
+            return new List<SnapPoint>();
         }
 
         public override List<GeoVisual> SplitByIntersectionPoint(List<Point> pointList)
         {
-
-
             return new List<GeoVisual>();
         }
 

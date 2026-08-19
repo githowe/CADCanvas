@@ -32,6 +32,16 @@ namespace CADCanvas.SubSystem.DrawingSystem
             dc.DrawLine(_pen, grid.ToScreen(Start), grid.ToScreen(End));
         }
 
+        public override void DrawHover(DrawingContext dc, IWorldGrid grid)
+        {
+            
+        }
+
+        public override void DrawSelect(DrawingContext dc, IWorldGrid grid)
+        {
+            
+        }
+
         public override List<SnapPoint> GetSnapPointList()
         {
             List<SnapPoint> result = new List<SnapPoint>();

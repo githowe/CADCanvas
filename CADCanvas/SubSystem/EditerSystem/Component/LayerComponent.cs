@@ -18,6 +18,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public GraphicLayer GraphicLayer => 图形图层;
 
+        public SelectToolLayer SelectToolLayer => 选择工具图层;
+
         public LineToolLayer LineToolLayer => 直线工具图层;
 
         public CircleToolLayer CircleToolLayer => 圆形工具图层;
@@ -25,6 +27,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public TrimToolLayer TrimToolLayer => 修剪工具图层;
 
         public RTreeViewLayer RTreeViewLayer => 空间索引可视化图层;
+
+        public SelectMarkLayer SelectMarkLayer => 选择标记图层;
 
         public PolarTrackingLayer PolarTrackingLayer => 极轴追踪图层;
 
@@ -46,6 +50,8 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
         public Point GetWorldPoint() => 网格图层.ToWorld(Mouse.GetPosition(_host.Layer_Mouse));
 
         public Point GetWorldPoint(Point screenPoint) => 网格图层.ToWorld(screenPoint);
+
+        public Rect GetWorldRect(Rect screenRect) => 网格图层.ToWorld(screenRect);
 
         public void UpdateGrid()
         {
@@ -157,6 +163,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _host.LayerBox.Children.Add(图形图层);
             _layerList.Add(图形图层);
             // 添加工具图层
+            选择工具图层 = new SelectToolLayer { Grid = 网格图层 };
+            _host.LayerBox.Children.Add(选择工具图层);
+            _layerList.Add(选择工具图层);
             直线工具图层 = new LineToolLayer { Grid = 网格图层 };
             _host.LayerBox.Children.Add(直线工具图层);
             _layerList.Add(直线工具图层);
@@ -171,6 +180,9 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             _host.Layer_RTree.Children.Add(空间索引可视化图层);
             _layerList.Add(空间索引可视化图层);
             // 添加标记图层
+            选择标记图层 = new SelectMarkLayer { Grid = 网格图层 };
+            _host.Layer_Mark.Children.Add(选择标记图层);
+            _layerList.Add(选择标记图层);
             极轴追踪图层 = new PolarTrackingLayer { Grid = 网格图层 };
             _host.Layer_Mark.Children.Add(极轴追踪图层);
             _layerList.Add(极轴追踪图层);
@@ -210,6 +222,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         #region 工具图层 - 各种工具的可视化图层
 
+        private SelectToolLayer? 选择工具图层;
         /// <summary>直线工具</summary>
         private LineToolLayer? 直线工具图层;
         /// <summary>圆形工具</summary>
@@ -227,6 +240,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         #region 标记图层
 
+        private SelectMarkLayer? 选择标记图层;
         /// <summary>极轴追踪</summary>
         private PolarTrackingLayer? 极轴追踪图层;
         /// <summary>捕捉标记</summary>
