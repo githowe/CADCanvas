@@ -13,17 +13,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         public void HandleKeyDown(KeyEventArgs e)
         {
-            // 全选
-            if (e.Key == Key.A && Keyboard.Modifiers == ModifierKeys.Control)
-            {
-
-            }
-            // 删除
-            else if (e.Key == Key.Delete)
-            {
-
-            }
-            else _toolComponent.HandleKeyDown(e);
+            _toolComponent.HandleKeyDown(e);
         }
 
         #endregion

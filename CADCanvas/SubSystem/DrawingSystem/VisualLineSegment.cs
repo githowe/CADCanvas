@@ -34,6 +34,14 @@ namespace CADCanvas.SubSystem.DrawingSystem
             _hoverPen.StartLineCap = PenLineCap.Round;
             _hoverPen.EndLineCap = PenLineCap.Round;
             _hoverPen.Freeze();
+
+            _selectPen = new Pen(new SolidColorBrush(Color.FromArgb(128, 47, 110, 234)), LineWidth + 4);
+            _selectPen.StartLineCap = PenLineCap.Round;
+            _selectPen.EndLineCap = PenLineCap.Round;
+            _selectPen.Freeze();
+
+            _pointBorder.Freeze();
+            _pointFill.Freeze();
         }
 
         public override void Draw(DrawingContext dc, IWorldGrid grid)
@@ -48,7 +56,12 @@ namespace CADCanvas.SubSystem.DrawingSystem
 
         public override void DrawSelect(DrawingContext dc, IWorldGrid grid)
         {
-            
+            // 绘制描边
+            dc.DrawLine(_selectPen, grid.ToScreen(Start), grid.ToScreen(End));
+            // 绘制起点、中点、终点
+            DrawPoint(dc, grid.ToScreen(Start, true), _pointFill, _pointBorder);
+            DrawPoint(dc, grid.ToScreen(new Point((Start.X + End.X) / 2, (Start.Y + End.Y) / 2), true), _pointFill, _pointBorder);
+            DrawPoint(dc, grid.ToScreen(End, true), _pointFill, _pointBorder);
         }
 
         public override List<SnapPoint> GetSnapPointList()
@@ -195,5 +208,8 @@ namespace CADCanvas.SubSystem.DrawingSystem
         private readonly record struct SegmentPoint(double T, Point Point);
         private Pen? _pen = null;
         private Pen? _hoverPen = null;
+        private Pen? _selectPen = null;
+        private readonly Pen _pointBorder = new Pen(Brushes.White, 1);
+        private readonly Brush _pointFill = new SolidColorBrush(Color.FromArgb(255, 0, 127, 255));
     }
 }

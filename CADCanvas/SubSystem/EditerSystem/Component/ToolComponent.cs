@@ -61,8 +61,6 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
 
         #region 通用工具方法
 
-
-
         public void CaptureOperationLayer() => _host.Layer_Mouse.CaptureMouse();
 
         public void ReleaseOperationLayer() => _host.Layer_Mouse.ReleaseMouseCapture();
@@ -281,6 +279,56 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             // 更新精确悬停对象
             rect = new Rect(mousePoint.X - 5, mousePoint.Y - 5, 10, 10);
             GetComponent<SelectComponent>().UpdateHoveredVisual(_layerComponent.GetWorldRect(rect));
+        }
+
+        public void ClearHover()
+        {
+            GetComponent<SelectComponent>().ClearHover();
+        }
+
+        public void AddSelect()
+        {
+            GetComponent<SelectComponent>().AddSelect();
+        }
+
+        public void AddSelect(Point start, Point end)
+        {
+            bool intersect = end.X < start.X;
+            GetComponent<SelectComponent>().AddSelect(new Rect(start, end), intersect);
+        }
+
+        public void RemoveSelect()
+        {
+
+        }
+
+        public void ClearSelect()
+        {
+            GetComponent<SelectComponent>().ClearSelect();
+        }
+
+        public void SelectAll()
+        {
+
+        }
+
+        public void InvertSelect()
+        {
+
+        }
+
+        public void DeleteSelect()
+        {
+            // 获取选中对象
+            List<GeoVisual> selectedVisual = new List<GeoVisual>(GetComponent<SelectComponent>().SelectedVisual);
+            // 清空选择
+            GetComponent<SelectComponent>().ClearSelect();
+            // 删除选中对象
+            _layerComponent.RemoveGraphic(selectedVisual);
+            _layerComponent.UpdateGraphic();
+            GetComponent<SceneComponent>().RemoveVisual(selectedVisual);
+            // 更新悬停对象
+            UpdateHoverObject();
         }
 
         #endregion

@@ -144,6 +144,7 @@ namespace CADCanvas.SubSystem.DrawingSystem
         /// </summary>
         public bool IsIntersection(GeoVisual visual, Rect rect)
         {
+            if (rect.Width == 0 || rect.Height == 0) return false;
             return IsIntersectionWithRect(visual.Handle, rect.Left, rect.Top, rect.Right, rect.Bottom);
         }
 

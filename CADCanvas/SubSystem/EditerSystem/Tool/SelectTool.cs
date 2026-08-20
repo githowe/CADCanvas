@@ -33,6 +33,10 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             中键按下();
 
             滚轮();
+
+            按下Esc();
+
+            _handler.TreeRootKeyDown = HandleTreeRootKeyDown;
         }
 
         public override void Enable()
@@ -43,7 +47,18 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         public override void Clear()
         {
-
+            if (_stage == SelectState.SelectEnd)
+            {
+                ResetTree();
+                _host.ReleaseOperationLayer();
+                工具图层.SelectStart = null;
+                工具图层.SelectEnd = null;
+                工具图层.Clear();
+                光标图层.SwitchCursor(ImageManager.Instance.Cursor_Select);
+                _stage = SelectState.SelectStart;
+            }
+            _host.ClearSelect();
+            _host.ClearHover();
         }
 
         #endregion
@@ -117,10 +132,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             {
                 ResetTree();
                 _host.ReleaseOperationLayer();
-                工具图层.SelectStart = null;
-                工具图层.SelectEnd = null;
-                工具图层.Clear();
-                光标图层.SwitchCursor(ImageManager.Instance.Cursor_Select);
+                _stage = SelectState.SelectEnd;
             });
             Finish();
         }
@@ -129,6 +141,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         {
             NewTree("选择终点", (_) =>
             {
+                _host.AddSelect(工具图层.SelectStart.Value, 工具图层.SelectEnd.Value);
                 工具图层.SelectStart = null;
                 工具图层.SelectEnd = null;
                 工具图层.Clear();
@@ -154,7 +167,25 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
 
         private void 命中对象()
         {
-
+            NewTree("命中对象", (_) =>
+            {
+                _host.AddSelect();
+            });
+            NewNode(Behaviors.LeftUp, (_) =>
+            {
+                ResetTree();
+            });
+            BackToRoot();
+            NewNode(Behaviors.Move, (_) =>
+            {
+                光标图层.MoveCursor(_host.GetMousePoint());
+            });
+            NewNode(Behaviors.LeftUp, (_) =>
+            {
+                ResetTree();
+                _stage = SelectState.SelectStart;
+            });
+            Finish();
         }
 
         private void 中键按下()
@@ -202,6 +233,16 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
             Finish();
         }
 
+        private void 按下Esc()
+        {
+            NewTree("按下Esc", (_) =>
+            {
+                ResetTree();
+                _host.ClearSelect();
+            });
+            Finish();
+        }
+
         #endregion
 
         #region 工具事件
@@ -233,10 +274,21 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
                     工具图层.Clear();
                     光标图层.SwitchCursor(ImageManager.Instance.Cursor_Select);
                     _stage = SelectState.SelectStart;
+                    return;
                 }
             }
+            else if (e.Key == Key.Delete)
+            {
+                if (_stage == SelectState.SelectStart) _host.DeleteSelect();
+            }
+            base.OnKeyDown(e);
             // 禁止系统处理Tab、Esc、Enter键
             if (e.Key is Key.Tab or Key.Escape or Key.Enter) e.Handled = true;
+        }
+
+        private void HandleTreeRootKeyDown(KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape) Invoke("按下Esc");
         }
 
         #endregion

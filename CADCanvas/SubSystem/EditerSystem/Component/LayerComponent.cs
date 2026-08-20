@@ -110,6 +110,12 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             图形图层.GeoVisualList.Add(graphic);
         }
 
+        public void RemoveGraphic(List<GeoVisual> graphicList)
+        {
+            foreach (var item in graphicList)
+                图形图层.GeoVisualList.Remove(item);
+        }
+
         public void UpdateGraphic()
         {
             图形图层.Update();

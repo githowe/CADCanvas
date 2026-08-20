@@ -55,6 +55,19 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
             UpdateBoundsLayerView();
         }
 
+        public void RemoveVisual(List<GeoVisual> visualList)
+        {
+            foreach (var item in visualList)
+            {
+                GeoTool.Instance.FreeCurve(item);
+                _visualList.Remove(item);
+            }
+            _tree.Clear();
+            _tree.Build(_visualList.Cast<IBox>().ToList());
+            _tree.UpdateBoundsLayer();
+            UpdateBoundsLayerView();
+        }
+
         public void ClearVisual()
         {
             foreach (var item in _visualList) GeoTool.Instance.FreeCurve(item);
@@ -175,6 +188,32 @@ namespace CADCanvas.SubSystem.EditerSystem.Component
                 if (GeoTool.Instance.IsIntersection(item, visual))
                     result.Add(item);
             }
+            return result;
+        }
+
+        /// <summary>
+        /// 获取区域内的可视对象列表
+        /// </summary>
+        public List<GeoVisual> GetVisualByRect(Rect rect, bool intersect)
+        {
+            List<GeoVisual> result = new List<GeoVisual>();
+
+            // 查找包围盒相交的可视对象
+            IReadOnlyList<IBox> boundsList = _tree.Find(rect);
+            // 遍历对象
+            foreach (GeoVisual box in boundsList)
+            {
+                // 添加框内对象
+                if (rect.Contains(box.Bounds))
+                {
+                    result.Add(box);
+                    continue;
+                }
+                // 交叉选择，添加相交对象
+                if (intersect && GeoTool.Instance.IsIntersection(box, rect))
+                    result.Add(box);
+            }
+
             return result;
         }
 

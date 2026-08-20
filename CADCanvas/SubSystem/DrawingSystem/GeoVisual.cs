@@ -45,5 +45,10 @@ namespace CADCanvas.SubSystem.DrawingSystem
         /// 拼接分割图形
         /// </summary>
         public abstract List<GeoVisual> JointSplitVisual(List<GeoVisual> visualList);
+
+        protected void DrawPoint(DrawingContext dc, Point screenPoint, Brush fill, Pen border)
+        {
+            dc.DrawRectangle(fill, border, new Rect(screenPoint.X - 5, screenPoint.Y - 5, 10, 10));
+        }
     }
 }
