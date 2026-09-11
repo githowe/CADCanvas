@@ -123,7 +123,7 @@ namespace CADCanvas.SubSystem.DrawingSystem
         {
             List<Point> result = new List<Point>();
             // 求交并返回交点数量
-            double rad = MathTool.AngleToRadian(angle);
+            double rad = MathTool.ToRadian(angle);
             double dx = Math.Cos(rad);
             double dy = Math.Sin(rad);
             int count = GetIntersectionWithRay(visual.Handle, start.X, start.Y, dx, dy);

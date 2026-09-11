@@ -31,4 +31,13 @@ namespace CADCanvas.SubSystem.DrawingSystem
         [DllImport("OCCTBridge.dll")]
         public static extern IntPtr CreateCircle(double centerX, double centerY, double radius);
     }
+
+    public class ArcInterop
+    {
+        /// <summary>
+        /// 创建圆弧
+        /// </summary>
+        [DllImport("OCCTBridge.dll")]
+        public static extern IntPtr CreateArc(double centerX, double centerY, double radius, double startRadian, double endRadian);
+    }
 }

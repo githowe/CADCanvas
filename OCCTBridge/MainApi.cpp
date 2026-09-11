@@ -2,6 +2,7 @@
 #include "GlobalCache.h"
 
 #include <Geom2dAPI_InterCurveCurve.hxx>
+#include <GC_MakeArcOfCircle2d.hxx>
 
 void InitPoint2DCache(double* cache, int size)
 {
@@ -28,6 +29,16 @@ void* CreateCircle(double centerX, double centerY, double radius)
 {
 	CircleWrapper* wrapper = new CircleWrapper();
 	wrapper->Circle = new Geom2d_Circle(gp_Ax2d(gp_Pnt2d(centerX, centerY), gp_Dir2d(1, 0)), radius);
+	return wrapper;
+}
+
+void* CreateArc(double centerX, double centerY, double radius, double startRadian, double endRadian)
+{
+	ArcWrapper* wrapper = new ArcWrapper();
+
+	if (endRadian < startRadian) endRadian += 2 * M_PI;
+	wrapper->Arc = GC_MakeArcOfCircle2d(gp_Circ2d(gp_Ax2d(gp_Pnt2d(centerX, centerY), gp_Dir2d(1, 0)), radius), startRadian, endRadian);
+
 	return wrapper;
 }
 

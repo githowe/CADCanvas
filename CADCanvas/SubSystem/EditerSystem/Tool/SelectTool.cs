@@ -141,6 +141,7 @@ namespace CADCanvas.SubSystem.EditerSystem.Tool
         {
             NewTree("选择终点", (_) =>
             {
+                if (工具图层.SelectEnd == null) 工具图层.SelectEnd = 工具图层.SelectStart;
                 _host.AddSelect(工具图层.SelectStart.Value, 工具图层.SelectEnd.Value);
                 工具图层.SelectStart = null;
                 工具图层.SelectEnd = null;

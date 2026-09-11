@@ -2,17 +2,17 @@
 
 namespace XLogic.Wpf
 {
-    public class MathTool
+    public static class MathTool
     {
         /// <summary>
         /// 角度转弧度
         /// </summary>
-        public static double AngleToRadian(double angle) => angle * Math.PI / 180.0;
+        public static double ToRadian(this double angle) => angle * Math.PI / 180.0;
 
         /// <summary>
         /// 弧度转角度
         /// </summary>
-        public static double RadianToAngle(double radian) => radian * 180.0 / Math.PI;
+        public static double ToAngle(this double radian) => radian * 180.0 / Math.PI;
 
         /// <summary>
         /// 根据角度计算终点坐标
@@ -20,7 +20,7 @@ namespace XLogic.Wpf
         public static Point GetEndPointFromAngle(double angle)
         {
             Point result = new Point();
-            double radian = AngleToRadian(angle);
+            double radian = angle.ToRadian();
             result.X = Math.Cos(radian);
             result.Y = Math.Sin(radian);
             return result;

@@ -61,6 +61,20 @@ namespace CADCanvas.SubSystem.DrawingSystem
             return circle;
         }
 
+        public VisualArc CreateArc(double centerX, double centerY, double radius, double startRadian, double endRadian)
+        {
+            IntPtr arcHandle = ArcInterop.CreateArc(centerX, centerY, radius, startRadian, endRadian);
+            VisualArc arc = new VisualArc
+            {
+                Handle = arcHandle,
+                Center = new Point(centerX, centerY),
+                Radius = radius,
+                StartRadian = startRadian,
+                EndRadian = endRadian,
+            };
+            return arc;
+        }
+
         #endregion
     }
 }

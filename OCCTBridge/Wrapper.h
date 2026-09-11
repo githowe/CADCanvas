@@ -51,3 +51,14 @@ public:
 	Handle(Geom2d_Curve) GetCurve() override { return Circle; }
 	void FreeCurve() override { Circle.Nullify(); }
 };
+
+/// <summary>
+/// ±Ì æ‘≤ª°
+/// </summary>
+class ArcWrapper : public CurveWrapper
+{
+public:
+	Handle(Geom2d_TrimmedCurve) Arc;
+	Handle(Geom2d_Curve) GetCurve() override { return Arc; }
+	void FreeCurve() override { Arc.Nullify(); }
+};

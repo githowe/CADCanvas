@@ -23,6 +23,11 @@ dll_export void* CreateLineSegment(double x1, double y1, double x2, double y2);
 dll_export void* CreateCircle(double centerX, double centerY, double radius);
 
 /// <summary>
+/// 创建圆弧
+/// </summary>
+dll_export void* CreateArc(double centerX, double centerY, double radius, double startRadian, double endRadian);
+
+/// <summary>
 /// 设置直线段起点
 /// </summary>
 dll_export void SetLineSegmentStart(LineSegmentWrapper* wrapper, double x, double y);
