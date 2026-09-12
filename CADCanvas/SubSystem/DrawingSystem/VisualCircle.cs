@@ -158,12 +158,13 @@ namespace CADCanvas.SubSystem.DrawingSystem
                 VisualArc visual = visualList[0] as VisualArc;
                 VisualArc arc = new VisualArc
                 {
-                    Handle = ArcInterop.CreateArc(visual.Center.X, visual.Center.Y, visual.Radius, visual.StartRadian, visual.EndRadian),
                     Center = visual.Center,
                     Radius = visual.Radius,
                     StartRadian = visual.StartRadian,
                     EndRadian = visual.EndRadian,
                 };
+                if (arc.EndRadian < arc.StartRadian) arc.EndRadian += 2 * Math.PI;
+                arc.Handle = ArcInterop.CreateArc(arc.Center.X, arc.Center.Y, arc.Radius, arc.StartRadian, arc.EndRadian);
                 arc.Init();
                 result.Add(arc);
                 return result;
@@ -187,8 +188,6 @@ namespace CADCanvas.SubSystem.DrawingSystem
                 // 否则，将当前圆弧添加至结果，并创建新的圆弧
                 else
                 {
-                    current.Handle = ArcInterop.CreateArc(current.Center.X, current.Center.Y, current.Radius, current.StartRadian, current.EndRadian);
-                    current.Init();
                     result.Add(current);
                     current = new VisualArc
                     {
@@ -199,10 +198,21 @@ namespace CADCanvas.SubSystem.DrawingSystem
                     };
                 }
             }
-            // 添加最后一个圆弧
-            current.Handle = ArcInterop.CreateArc(current.Center.X, current.Center.Y, current.Radius, current.StartRadian, current.EndRadian);
-            current.Init();
-            result.Add(current);
+            // 最后一个圆弧如果能与第一个圆弧首尾相连，则合并
+            first = result[0] as VisualArc;
+            double endRadian = current.EndRadian % (2 * Math.PI);
+            double radianDiff = Math.Abs(endRadian - first.StartRadian);
+            if (radianDiff < 1e-8) first.StartRadian = current.StartRadian;
+            // 否则，添加最后一个圆弧
+            else result.Add(current);
+
+            // 创建圆弧句柄并初始化
+            foreach (VisualArc item in result)
+            {
+                if (item.EndRadian < item.StartRadian) item.EndRadian += 2 * Math.PI;
+                item.Handle = ArcInterop.CreateArc(item.Center.X, item.Center.Y, item.Radius, item.StartRadian, item.EndRadian);
+                item.Init();
+            }
 
             return result;
         }
