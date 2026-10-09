@@ -198,12 +198,16 @@ namespace CADCanvas.SubSystem.DrawingSystem
                     };
                 }
             }
-            // 最后一个圆弧如果能与第一个圆弧首尾相连，则合并
-            first = result[0] as VisualArc;
-            double endRadian = current.EndRadian % (2 * Math.PI);
-            double radianDiff = Math.Abs(endRadian - first.StartRadian);
-            if (radianDiff < 1e-8) first.StartRadian = current.StartRadian;
-            // 否则，添加最后一个圆弧
+            if (result.Count > 0)
+            {
+                // 最后一个圆弧如果能与第一个圆弧首尾相连，则合并
+                first = result[0] as VisualArc;
+                double endRadian = current.EndRadian % (2 * Math.PI);
+                double radianDiff = Math.Abs(endRadian - first.StartRadian);
+                if (radianDiff < 1e-8) first.StartRadian = current.StartRadian;
+                // 否则，添加最后一个圆弧
+                else result.Add(current);
+            }
             else result.Add(current);
 
             // 创建圆弧句柄并初始化
